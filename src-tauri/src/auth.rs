@@ -1,9 +1,12 @@
 use crate::{
     account_manager::AccountsConfig, auth::user_credentials::UserCredentials,
-    common::validators::validate_steam_secret,
+    common::validators::validate_steam_secret, AppState,
 };
 use serde::{Deserialize, Serialize};
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::{
+    sync::Mutex,
+    time::{SystemTime, UNIX_EPOCH},
+};
 use steamguard::{
     protobufs::steammessages_auth_steamclient::{EAuthSessionGuardType, EAuthTokenPlatformType},
     token::TwoFactorSecret,
@@ -124,11 +127,22 @@ pub fn login(app: AppHandle, payload: LoginRequest) -> Result<(), LoginError> {
         access_token: tokens.access_token().expose_secret().to_string(),
         ..Default::default()
     };
-    let mut config = AccountsConfig::from_config(&config_path)?;
+    let state = app.state::<Mutex<AppState>>();
+    let config = &mut state.lock().unwrap().accounts_config;
     config.active_account_name = Some(user_credentials.account_name.clone());
     config.accounts.push(user_credentials);
     config.save_to_config(&config_path)?;
     Ok(())
+}
+
+#[tauri::command]
+pub fn get_accounts(state: tauri::State<'_, Mutex<AppState>>) -> Vec<String> {
+    let config = &state.lock().unwrap().accounts_config;
+    return config
+        .accounts
+        .iter()
+        .map(|account| account.account_name.clone())
+        .collect();
 }
 
 #[cfg(test)]
