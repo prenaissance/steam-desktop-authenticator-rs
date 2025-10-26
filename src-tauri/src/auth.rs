@@ -1,4 +1,7 @@
-use crate::common::validators::validate_base_64;
+use crate::{
+    account_manager::AccountsConfig, auth::user_credentials::UserCredentials,
+    common::validators::validate_steam_secret,
+};
 use serde::{Deserialize, Serialize};
 use std::time::{SystemTime, UNIX_EPOCH};
 use steamguard::{
@@ -9,10 +12,9 @@ use steamguard::{
     DeviceDetails, UserLogin,
 };
 use tauri::{AppHandle, Manager};
-use tokio;
 use validator::{Validate, ValidationErrors};
 
-mod user_credentials;
+pub mod user_credentials;
 
 #[derive(Debug, Validate, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -23,18 +25,21 @@ pub struct LoginRequest {
     #[validate(length(min = 1))]
     password: String,
 
-    #[validate(length(equal = 28), custom(function = validate_base_64))]
+    #[validate(length(equal = 28), custom(function = validate_steam_secret))]
     shared_secret: String,
 
-    #[validate(length(equal = 28), custom(function = validate_base_64))]
+    #[validate(length(equal = 28), custom(function = validate_steam_secret))]
     identity_secret: String,
 }
 
 #[derive(Debug, Serialize)]
+#[serde(tag = "type", content = "message")]
 pub enum LoginError {
     WrongCredentials,
     ValidationError(String),
     OtpError,
+    IOError(String),
+    Unimplemented,
 }
 
 impl From<ValidationErrors> for LoginError {
@@ -45,7 +50,7 @@ impl From<ValidationErrors> for LoginError {
 
 impl From<UpdateAuthSessionError> for LoginError {
     fn from(value: UpdateAuthSessionError) -> Self {
-        dbg!("Encountered {} kind OTP error", value);
+        eprintln!("Encountered {value} kind OTP error");
         LoginError::OtpError
     }
 }
@@ -56,8 +61,14 @@ impl From<steamguard::LoginError> for LoginError {
     }
 }
 
+impl From<std::io::Error> for LoginError {
+    fn from(value: std::io::Error) -> Self {
+        LoginError::IOError(value.to_string())
+    }
+}
+
 #[tauri::command]
-pub async fn login(app: AppHandle, payload: LoginRequest) -> Result<(), LoginError> {
+pub fn login(app: AppHandle, payload: LoginRequest) -> Result<(), LoginError> {
     payload.validate()?;
     let config_path = app
         .path()
@@ -82,27 +93,41 @@ pub async fn login(app: AppHandle, payload: LoginRequest) -> Result<(), LoginErr
     );
     let confirmation_methods =
         user_login.begin_auth_via_credentials(&payload.username, &payload.password)?;
+    dbg!(&confirmation_methods);
     let is_device_code_available = confirmation_methods.iter().any(|method| {
         method.confirmation_type == EAuthSessionGuardType::k_EAuthSessionGuardType_DeviceCode
     });
     if !is_device_code_available {
-        unimplemented!("Non TOTP authentication not implemented");
+        return Err(LoginError::Unimplemented);
     }
-    let two_factor_secret = TwoFactorSecret::parse_shared_secret(payload.shared_secret)
+    let two_factor_secret = TwoFactorSecret::parse_shared_secret(payload.shared_secret.clone())
         .expect("Validation done before");
+    let totp = two_factor_secret.generate_code(
+        SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_secs(),
+    );
     user_login.submit_steam_guard_code(
         EAuthSessionGuardType::k_EAuthSessionGuardType_DeviceCode,
-        two_factor_secret.generate_code(
-            SystemTime::now()
-                .duration_since(UNIX_EPOCH)
-                .unwrap()
-                .as_secs(),
-        ),
+        totp,
     )?;
     let tokens = user_login
         .poll_until_tokens()
         .expect("Didn't get any tokens");
-    tokio::fs::write(config_path, "").await.unwrap();
+    let user_credentials = UserCredentials {
+        account_name: payload.username,
+        account_password: payload.password,
+        shared_secret: payload.shared_secret,
+        identity_secret: payload.identity_secret,
+        refresh_token: tokens.refresh_token().expose_secret().to_string(),
+        access_token: tokens.access_token().expose_secret().to_string(),
+        ..Default::default()
+    };
+    let mut config = AccountsConfig::from_config(&config_path)?;
+    config.active_account_name = Some(user_credentials.account_name.clone());
+    config.accounts.push(user_credentials);
+    config.save_to_config(&config_path)?;
     Ok(())
 }
 
@@ -127,8 +152,8 @@ mod tests {
         let request = LoginRequest {
             username: "matcha_latte".to_string(),
             password: "Password123!".to_string(),
-            shared_secret: "RGF0YVdpdGhFbm91Z2hQYWRkaW5n".to_string(),
-            identity_secret: "RGF0YVdpdGhFbm91Z2hQYWRkaW5n".to_string(),
+            shared_secret: "FSY2y2mThnpJv1h+lXKTVuH+cvQ=".to_string(),
+            identity_secret: "FSY2y2mThnpJv1h+lXKTVuH+cvQ=".to_string(),
         };
 
         assert_eq!(request.validate(), Ok(()))

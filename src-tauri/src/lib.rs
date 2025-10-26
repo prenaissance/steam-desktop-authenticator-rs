@@ -1,3 +1,4 @@
+mod account_manager;
 mod auth;
 mod common;
 

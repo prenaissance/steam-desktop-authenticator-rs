@@ -1,8 +1,18 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { InfoIcon } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import {
+  type LoginError,
+  type LoginRequest,
+  loginFullCredentials,
+  loginRequestSchema,
+} from "~/api/auth";
 import { Button } from "~/components/ui/button";
 import {
   Field,
+  FieldError,
   FieldGroup,
   FieldLabel,
   FieldLegend,
@@ -23,8 +33,29 @@ import {
 
 export const AuthSteam = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginRequest>({
+    resolver: zodResolver(loginRequestSchema),
+  });
+  const onSubmit = useCallback(async (data: LoginRequest) => {
+    setIsLoading(true);
+    await loginFullCredentials(data)
+      .catch((err: LoginError) => {
+        toast.error(err.message ?? err.type, {
+          dismissible: true,
+        });
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
+
   return (
-    <form className="flex justify-center pt-8">
+    <form
+      className="flex justify-center pt-8"
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <FieldSet className="max-w-xs w-full">
         <FieldLegend className="font-bold">Steam Authentication</FieldLegend>
         <FieldGroup className="gap-2">
@@ -34,8 +65,9 @@ export const AuthSteam = () => {
               id="steam-username"
               type="text"
               placeholder="Enter your Steam username"
-              required
+              {...register("username")}
             />
+            <FieldError>{errors.username?.message}</FieldError>
           </Field>
           <Field>
             <FieldLabel htmlFor="steam-password">Steam Password</FieldLabel>
@@ -43,7 +75,7 @@ export const AuthSteam = () => {
               id="steam-password"
               type="password"
               placeholder="Enter your Steam password"
-              required
+              {...register("password")}
             />
           </Field>
           <Field>
@@ -54,8 +86,8 @@ export const AuthSteam = () => {
               <InputGroupInput
                 id="steam-shared-secret"
                 type="password"
-                placeholder="kLqX8iYvO0D+5aBc/1k2P4Q=="
-                required
+                placeholder="RGF0YVdpdGhFbm91Z2hQYWRkaW5n"
+                {...register("sharedSecret")}
               />
               <InputGroupAddon align="inline-end">
                 <Tooltip>
@@ -74,6 +106,7 @@ export const AuthSteam = () => {
                 </Tooltip>
               </InputGroupAddon>
             </InputGroup>
+            <FieldError>{errors.sharedSecret?.message}</FieldError>
           </Field>
           <Field>
             <FieldLabel htmlFor="steam-identity-secret">
@@ -83,8 +116,8 @@ export const AuthSteam = () => {
               <InputGroupInput
                 id="steam-identity-secret"
                 type="password"
-                placeholder="kLqX8iYvO0D+5aBc/1k2P4Q=="
-                required
+                placeholder="RGF0YVdpdGhFbm91Z2hQYWRkaW5n"
+                {...register("identitySecret")}
               />
               <InputGroupAddon align="inline-end">
                 <Tooltip>
@@ -104,6 +137,7 @@ export const AuthSteam = () => {
                 </Tooltip>
               </InputGroupAddon>
             </InputGroup>
+            <FieldError>{errors.identitySecret?.message}</FieldError>
           </Field>
           <Button isLoading={isLoading} type="submit" className="w-full mt-4">
             Add Steam Account

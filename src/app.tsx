@@ -1,8 +1,8 @@
 import { invoke } from "@tauri-apps/api/core";
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
 import "./index.css";
 import { BrowserRouter, Route, Routes } from "react-router";
+import { Toaster } from "./components/ui/sonner";
 import { Layout } from "./layout";
 import { AuthSteam } from "./pages/auth/steam";
 import { Welcome } from "./pages/welcome";
@@ -17,15 +17,18 @@ export const App = () => {
   }
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Welcome />} />
-        </Route>
-        <Route path="auth">
-          <Route path="steam" element={<AuthSteam />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Welcome />} />
+          </Route>
+          <Route path="auth">
+            <Route path="steam" element={<AuthSteam />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+      <Toaster />
+    </>
   );
 };
