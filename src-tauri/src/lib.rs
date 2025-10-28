@@ -5,6 +5,7 @@ use tauri::{App, Manager};
 use crate::account_manager::AccountsConfig;
 
 mod account_manager;
+mod approval;
 mod auth;
 mod common;
 
@@ -29,7 +30,11 @@ pub fn run() {
             app.manage(Mutex::new(AppState::init(&app)?));
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![auth::login, auth::get_accounts])
+        .invoke_handler(tauri::generate_handler![
+            auth::login,
+            auth::get_accounts,
+            approval::get_otp
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

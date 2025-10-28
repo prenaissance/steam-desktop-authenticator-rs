@@ -1,6 +1,7 @@
 use std::path::Path;
 
 use serde::{Deserialize, Serialize};
+use steamguard::SteamGuardAccount;
 
 #[derive(Debug, Serialize, Deserialize, Clone, Default)]
 pub struct UserCredentials {
@@ -23,3 +24,25 @@ impl UserCredentials {
         unimplemented!()
     }
 }
+
+// impl From<UserCredentials> for SteamGuardAccount {
+//     fn from(value: UserCredentials) -> Self {
+//         SteamGuardAccount {
+//             account_name: value.account_name,
+//             steam_id: 0,
+//             serial_number: "".to_string(),
+//             revocation_code: value
+//                 .revocation_code
+//                 .unwrap_or_else(|| "".to_string())
+//                 .parse()
+//                 .unwrap(),
+//             shared_secret: (),
+//             token_gid: (),
+//             identity_secret: (),
+//             uri: (),
+//             device_id: (),
+//             secret_1: (),
+//             tokens: (),
+//         }
+//     }
+// }
