@@ -33,7 +33,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             auth::login,
             auth::get_accounts,
-            approval::get_otp
+            approval::get_otp,
+            account_manager::is_logged_in
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
