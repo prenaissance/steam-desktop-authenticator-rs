@@ -29,3 +29,10 @@ export const loginFullCredentials = async (loginRequest: LoginRequest) => {
   console.log(response);
   return response;
 };
+
+export type IsLoggedInResponse = boolean;
+
+export const isLoggedIn = async () => {
+  const response = await invoke<IsLoggedInResponse>("is_logged_in");
+  return response;
+};

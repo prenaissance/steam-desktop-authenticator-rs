@@ -1,10 +1,25 @@
 import { TooltipTrigger } from "@radix-ui/react-tooltip";
 import { Info } from "lucide-react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { isLoggedIn } from "~/api/auth";
+import { useInvokeQuery } from "~/api/hooks";
 import { Button } from "~/components/ui/button";
+import { Spinner } from "~/components/ui/spinner";
 import { Tooltip, TooltipContent } from "~/components/ui/tooltip";
 
-export const Welcome = () => {
+export const WelcomePage = () => {
+  const { data, loading } = useInvokeQuery(isLoggedIn);
+  const navigate = useNavigate();
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <Spinner />
+      </div>
+    );
+  }
+  if (data) {
+    navigate("app/totp");
+  }
   return (
     <div>
       <h1>Welcome to the Steam Desktop Authenticator!</h1>

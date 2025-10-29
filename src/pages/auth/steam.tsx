@@ -31,7 +31,7 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 
-export const AuthSteam = () => {
+export const AuthSteamPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const {
     register,
