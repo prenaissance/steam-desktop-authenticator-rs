@@ -1,17 +1,17 @@
-import { Window } from "@tauri-apps/api/window";
-import { Minus, X } from "lucide-react";
-import { Button } from "./ui/button";
-import { useCallback } from "react";
+import { X, Minus } from 'lucide-react';
+import { Button } from './ui/button';
+import { getCurrentWindow } from '@tauri-apps/api/window';
+import { useCallback } from 'react';
 
 export const TitleBar = () => {
   const handleMinimize = useCallback(async () => {
-    const window = Window.getCurrent();
+    const window = await getCurrentWindow();
     await window.minimize();
   }, []);
 
   const handleClose = useCallback(async () => {
-    const window = Window.getCurrent();
-    await window.close();
+    const window = await getCurrentWindow();
+    await window.hide();
   }, []);
 
   return (
