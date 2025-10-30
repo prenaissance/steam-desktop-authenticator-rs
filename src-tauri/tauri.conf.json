@@ -9,6 +9,15 @@
     "beforeBuildCommand": "pnpm build",
     "frontendDist": "../dist"
   },
+  "plugins": {
+    "shell": {
+      "allow": [
+        {
+          "name": "open"
+        }
+      ]
+    }
+  },
   "app": {
     "windows": [
       {
@@ -16,7 +25,10 @@
         "width": 600,
         "height": 800,
         "minWidth": 600,
-        "minHeight": 800
+        "minHeight": 800,
+        "decorations": false,
+        "transparent": true,
+        "resizable": false
       }
     ],
     "security": {
