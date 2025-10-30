@@ -1,5 +1,6 @@
 import { AlertTriangle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Skeleton } from "~/components/ui/skeleton";
 
@@ -76,9 +77,15 @@ const Totp = ({
 
   const code = data || "-----";
 
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(code);
+    toast.success("Code copied to clipboard");
+  }
+
   return (
     <span
-      className={`text-3xl font-bold tracking-widest text-foreground transition-opacity ${
+      onClick={handleCopy}
+      className={`cursor-pointer select-none text-3xl font-bold tracking-widest text-foreground transition-opacity ${
         isLoading ? "opacity-50" : "opacity-100"
       }`}
     >
@@ -98,23 +105,28 @@ export const TotpDisplay = ({
   const lastProgressRef = useRef(100);
 
   useEffect(() => {
-    const updateProgress = () => {
-      const now = Date.now();
-      const intervalMs = REFRESH_INTERVAL_SECONDS * 1000;
-      const remainder = now % intervalMs;
-      const remainingMs = intervalMs - remainder;
-      const currentProgress = (remainingMs / intervalMs) * 100;
+    const now = Math.floor(Date.now() / 1000);
+    const timeInPeriod = now % REFRESH_INTERVAL_SECONDS;
+    const initialProgress = ((REFRESH_INTERVAL_SECONDS - timeInPeriod) / REFRESH_INTERVAL_SECONDS) * 100;
+    
+    setProgress(initialProgress);
+    setRemainingSeconds(REFRESH_INTERVAL_SECONDS - timeInPeriod);
+
+    const timer = setInterval(() => {
+      const currentTime = Math.floor(Date.now() / 1000);
+      const currentTimeInPeriod = currentTime % REFRESH_INTERVAL_SECONDS;
+      const currentProgress = ((REFRESH_INTERVAL_SECONDS - currentTimeInPeriod) / REFRESH_INTERVAL_SECONDS) * 100;
+      
+      setProgress(currentProgress);
+      setRemainingSeconds(REFRESH_INTERVAL_SECONDS - currentTimeInPeriod);
+
       if (currentProgress > lastProgressRef.current) {
-        onRefresh(); // Call the `invalidate` function
+        onRefresh();
       }
       lastProgressRef.current = currentProgress;
-      setProgress(currentProgress);
-      setRemainingSeconds(Math.ceil(remainingMs / 1000));
-    };
+    }, 1000);
 
-    updateProgress();
-    const intervalId = setInterval(updateProgress, 250);
-    return () => clearInterval(intervalId);
+    return () => clearInterval(timer);
   }, [onRefresh]);
 
   return (

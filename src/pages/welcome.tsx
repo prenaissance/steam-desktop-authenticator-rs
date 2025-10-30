@@ -1,59 +1,73 @@
-import { TooltipTrigger } from "@radix-ui/react-tooltip";
-import { Info } from "lucide-react";
-import { Link, useNavigate } from "react-router";
+import { ExternalLink } from "lucide-react";
+import { motion } from "framer-motion";
 import { isLoggedIn } from "~/api/auth";
 import { useInvokeQuery } from "~/api/hooks";
-import { Button } from "~/components/ui/button";
 import { Spinner } from "~/components/ui/spinner";
-import { Tooltip, TooltipContent } from "~/components/ui/tooltip";
+import { Card } from "~/components/ui/card";
+import { AccountSelector } from "~/components/account-selector";
+import { NavigationMenu } from "~/components/navigation-menu";
+import { useActiveAccount } from "~/hooks/use-accounts";
+import { getNavigationItems } from "./utils/navigationPaths";
+import { Command } from "@tauri-apps/plugin-shell";
+
+const cmd = await Command.create("open", ["https://google.com"]);
 
 export const WelcomePage = () => {
-  const { data, loading } = useInvokeQuery(isLoggedIn);
-  const navigate = useNavigate();
-  if (loading) {
+  const { data: userData, loading } = useInvokeQuery(isLoggedIn);
+  const { loading: accountLoading } = useActiveAccount();
+
+  if (loading || accountLoading) {
     return (
       <div className="flex justify-center items-center h-full">
-        <Spinner />
+        <Spinner className="w-10 h-10" />
       </div>
     );
   }
-  if (data) {
-    navigate("app/totp");
-  }
-  return (
-    <div>
-      <h1>Welcome to the Steam Desktop Authenticator!</h1>
-      <p>Choose your authentication method:</p>
 
-      <div className="flex flex-col gap-2 mt-4">
-        <div className="flex items-center gap-2">
-          <Button asChild className="grow">
-            <Link to="/auth/totp">Use TOTP</Link>
-          </Button>
-          <Tooltip>
-            <TooltipContent>
-              Use this option to use the account JUST for generating TOTPs
-            </TooltipContent>
-            <TooltipTrigger>
-              <Info className="size-6" />
-            </TooltipTrigger>
-          </Tooltip>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button asChild className="grow">
-            <Link to="/auth/steam">Full Steam Guard</Link>
-          </Button>
-          <Tooltip>
-            <TooltipContent>
-              Use this option to log into Steam to manage both TOTPs and Steam
-              Guard confirmations
-            </TooltipContent>
-            <TooltipTrigger>
-              <Info className="size-6" />
-            </TooltipTrigger>
-          </Tooltip>
-        </div>
+  return (
+    <motion.div
+      className="h-full flex flex-col gap-6 p-6 max-w-6xl mx-auto"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
+      <div>
+        <h1 className="text-2xl font-bold">Steam Desktop Authenticator</h1>
+        <p className="text-muted-foreground mt-1">
+          Secure your Steam account and manage authentications
+        </p>
       </div>
-    </div>
+
+      <Card className="p-4">
+        <h2 className="text-base font-semibold mb-3">Active Account</h2>
+        <AccountSelector loading={accountLoading} />
+      </Card>
+
+      <div className="flex-1 min-h-0">
+        <h2 className="text-base font-semibold mb-3">Navigation</h2>
+        <Card className="p-4 h-[calc(100%-5rem)]">
+          <NavigationMenu items={getNavigationItems(!userData)} />
+        </Card>
+      </div>
+
+      <div className="mt-auto pt-8">
+        <Card
+          className="p-6 bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+          onClick={() =>
+            cmd.execute()
+          }
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-medium">Need Help?</h3>
+              <p className="text-sm text-muted-foreground">
+                Check out our documentation for guidance
+              </p>
+            </div>
+            <ExternalLink className="h-5 w-5 text-muted-foreground" />
+          </div>
+        </Card>
+      </div>
+    </motion.div>
   );
 };
