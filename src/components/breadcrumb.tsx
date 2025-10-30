@@ -31,11 +31,6 @@ export const Breadcrumb = () => {
   
   const availablePaths = [
     { 
-      path: "/totp", 
-      label: "OTP",
-      locked: !userData
-    },
-    { 
       path: "/confirmations", 
       label: "Confirmations",
       locked: !userData 

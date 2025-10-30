@@ -1,8 +1,8 @@
-use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, fs, path::PathBuf};
 use crate::auth::user_credentials::UserCredentials;
-use std::sync::Mutex;
 use anyhow::Result;
+use serde::{Deserialize, Serialize};
+use std::sync::Mutex;
+use std::{collections::HashMap, fs, path::PathBuf};
 
 #[derive(Debug, Serialize, Deserialize, Default, Clone)]
 pub struct StoredAccounts {

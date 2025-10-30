@@ -1,5 +1,6 @@
 use crate::{auth::accounts_store::StoredAccounts, AppState};
 use serde::Serialize;
+use std::path::PathBuf;
 use std::sync::Mutex;
 use tauri::State;
 

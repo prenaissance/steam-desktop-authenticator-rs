@@ -99,13 +99,6 @@ export const AccountsProvider = ({ children }: { children: React.ReactNode }) =>
   const setActive = useCallback(async (username: string) => {
     try {
       await invoke("set_active_account", { username });
-      const account = accounts[username];
-      if (account?.credentials) {
-        await loginFullCredentials({
-          username,
-          ...account.credentials
-        });
-      }
       setActiveUsername(username);
     } catch (err) {
       throw err instanceof Error ? err : new Error("Failed to set active account");

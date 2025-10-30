@@ -1,12 +1,14 @@
 import { LucideIcon, Lock } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
+import { Button } from "~/components/ui/button";
 
 interface NavigationItem {
   icon: LucideIcon;
   label: string;
-  path: string;
+  path?: string;
   locked?: boolean;
+  onClick?: () => void;
 }
 
 interface NavigationMenuProps {
@@ -15,29 +17,29 @@ interface NavigationMenuProps {
 
 export const NavigationMenu = ({ items }: NavigationMenuProps) => {
   return (
-    <nav className="space-y-1">
+    <div className="flex gap-3 w-full">
       {items.map((item) => {
-        const NavItem = (
-          <div
-            className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-              item.locked
-                ? "text-gray-400 dark:text-gray-600 cursor-not-allowed"
-                : "text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800/50"
+        const ButtonContent = (
+          <Button
+            variant="outline"
+            className={`w-full cursor-pointer select-none flex-1 h-16 rounded-2xl border-border/50 bg-secondary/30 hover:bg-secondary hover:border-primary/50 transition-all duration-300 flex items-center justify-center gap-3 group ${
+              item.locked ? "cursor-not-allowed text-gray-400 dark:text-gray-600" : ""
             }`}
+            onClick={item.locked ? undefined : item.onClick}
           >
-            <item.icon className="h-5 w-5" />
-            <span className="font-medium flex-1">{item.label}</span>
+            <div className="p-2 rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors">
+              <item.icon className="h-5 w-5 text-primary" />
+            </div>
+            <span className="font-medium">{item.label}</span>
             {item.locked && <Lock className="h-4 w-4" />}
-          </div>
+          </Button>
         );
 
         if (item.locked) {
           return (
-            <TooltipProvider key={item.path}>
+            <TooltipProvider key={item.label}>
               <Tooltip>
-                <TooltipTrigger asChild>
-                  {NavItem}
-                </TooltipTrigger>
+                <TooltipTrigger asChild>{ButtonContent}</TooltipTrigger>
                 <TooltipContent>
                   <p>Please login to access this feature</p>
                 </TooltipContent>
@@ -46,23 +48,16 @@ export const NavigationMenu = ({ items }: NavigationMenuProps) => {
           );
         }
 
-        return (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                isActive
-                  ? "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                  : "text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800/50"
-              }`
-            }
-          >
-            <item.icon className="h-5 w-5" />
-            <span className="font-medium">{item.label}</span>
-          </NavLink>
-        );
+        if (item.path) {
+          return (
+            <Link key={item.path} to={item.path} className="flex-1">
+              {ButtonContent}
+            </Link>
+          );
+        }
+
+        return <div key={item.label} className="flex-1">{ButtonContent}</div>;
       })}
-    </nav>
-  )
+    </div>
+  );
 };

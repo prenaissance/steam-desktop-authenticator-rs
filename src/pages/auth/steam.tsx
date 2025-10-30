@@ -76,7 +76,7 @@ export const AuthSteamPage = () => {
 
   return (
     <form
-      className="flex flex-col items-center justify-center pt-8 w-full"
+      className="flex flex-col items-center justify-center w-full"
       onSubmit={handleSubmit(onSubmit)}
     >
       <Breadcrumb />
@@ -218,7 +218,7 @@ export const AuthSteamPage = () => {
             <div className="flex flex-col items-center justify-center py-4">
               <p className="text-sm font-medium">Upload .maFile</p>
               <p className="text-xs text-muted-foreground mt-1">
-                Drag and drop or click to upload your Steam Desktop
+                Click to upload your Steam Desktop
                 Authenticator .maFile
               </p>
             </div>
