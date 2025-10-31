@@ -1,5 +1,6 @@
 use crate::{
-    auth::user_credentials::UserCredentials, common::validators::validate_steam_secret, AppState,
+    account_manager::AccountsConfig, auth::user_credentials::UserCredentials,
+    common::validators::validate_steam_secret, AppState,
 };
 use serde::{Deserialize, Serialize};
 use std::{
@@ -16,8 +17,6 @@ use steamguard::{
 use tauri::{AppHandle, Manager};
 use validator::{Validate, ValidationErrors};
 
-pub mod accounts_store;
-pub mod commands;
 pub mod user_credentials;
 
 #[derive(Debug, Validate, Deserialize)]

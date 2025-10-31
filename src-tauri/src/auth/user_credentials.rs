@@ -1,6 +1,7 @@
 use std::path::Path;
 
 use serde::{Deserialize, Serialize};
+use steamguard::SteamGuardAccount;
 
 #[derive(Debug, Serialize, Deserialize, Clone, Default)]
 pub struct UserCredentials {
@@ -13,8 +14,6 @@ pub struct UserCredentials {
     pub refresh_token: String,
     pub access_token: String,
     pub cookies: Option<String>,
-    pub steam_id: Option<String>,
-    pub avatar_url: Option<String>,
 }
 
 impl UserCredentials {
