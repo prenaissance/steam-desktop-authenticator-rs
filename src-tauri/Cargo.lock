@@ -4287,6 +4287,8 @@ version = "0.1.0"
 dependencies = [
  "base64 0.22.1",
  "gethostname",
+ "protobuf",
+ "protobuf-codegen",
  "reqwest",
  "serde",
  "serde_json",
