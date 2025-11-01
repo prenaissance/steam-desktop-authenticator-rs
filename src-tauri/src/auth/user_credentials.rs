@@ -5,6 +5,7 @@ use steamguard::SteamGuardAccount;
 
 #[derive(Debug, Serialize, Deserialize, Clone, Default)]
 pub struct UserCredentials {
+    pub steam_id: u64,
     pub account_name: String,
     pub account_password: String,
     pub shared_secret: String,

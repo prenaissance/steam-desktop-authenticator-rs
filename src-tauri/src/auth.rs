@@ -96,7 +96,6 @@ pub fn login(app: AppHandle, payload: LoginRequest) -> Result<(), LoginError> {
     );
     let confirmation_methods =
         user_login.begin_auth_via_credentials(&payload.username, &payload.password)?;
-    dbg!(&confirmation_methods);
     let is_device_code_available = confirmation_methods.iter().any(|method| {
         method.confirmation_type == EAuthSessionGuardType::k_EAuthSessionGuardType_DeviceCode
     });
@@ -125,6 +124,11 @@ pub fn login(app: AppHandle, payload: LoginRequest) -> Result<(), LoginError> {
         identity_secret: payload.identity_secret,
         refresh_token: tokens.refresh_token().expose_secret().to_string(),
         access_token: tokens.access_token().expose_secret().to_string(),
+        steam_id: tokens
+            .access_token()
+            .decode()
+            .expect("Could not decode steam auth JWT")
+            .steam_id(),
         ..Default::default()
     };
     let state = app.state::<Mutex<AppState>>();
