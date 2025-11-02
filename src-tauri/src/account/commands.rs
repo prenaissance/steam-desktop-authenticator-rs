@@ -1,7 +1,7 @@
 use std::sync::Mutex;
 
 use serde::Serialize;
-use steamguard::steamapi::{ApiRequest, BuildableRequest};
+use steamguard::steamapi::ApiRequest;
 use steamguard::token::Tokens;
 use steamguard::transport::{Transport, TransportError, WebApiTransport};
 
@@ -27,6 +27,7 @@ pub struct ProfileResponse {
     pub account_name: String,
 }
 
+/// Profile picture WIP
 #[tauri::command]
 pub fn get_profile(
     state: tauri::State<'_, Mutex<AppState>>,
@@ -46,7 +47,7 @@ pub fn get_profile(
         steamids: vec![active_account.steam_id],
         ..Default::default()
     };
-    let request = ApiRequest::new("IPlayerService", "GetPlayerLinkDetails", 2, request)
+    let request = ApiRequest::new("IPlayerService", "GetPlayerLinkDetails", 1, request)
         .with_access_token(tokens.access_token());
     let response = transport.send_request::<CPlayer_GetPlayerLinkDetails_Request, CPlayer_GetPlayerLinkDetails_Response>(request)?;
     Ok(response.into_response_data().accounts.pop().unwrap().into())
@@ -70,4 +71,8 @@ impl From<TransportError> for GetProfileError {
     }
 }
 
-impl_buildable_req!(CPlayer_GetPlayerLinkDetails_Request, true);
+impl_buildable_req!(
+    CPlayer_GetPlayerLinkDetails_Request,
+    reqwest::Method::GET,
+    true
+);
