@@ -1,15 +1,14 @@
-import { ChevronRight, Home, Lock } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { ChevronDown, ChevronRight, Home, Lock } from "lucide-react";
+import { Link, useLocation } from "react-router";
+import { isLoggedIn } from "~/api/auth";
+import { useInvokeQuery } from "~/api/hooks";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { ChevronDown } from "lucide-react";
-import { isLoggedIn } from "~/api/auth";
-import { useInvokeQuery } from "~/api/hooks";
-import { 
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -18,39 +17,39 @@ import {
 
 const pathMap: Record<string, string> = {
   "": "Home",
-  "totp": "TOTP",
-  "login": "Add account",
-  "app": "Application",
-  "confirmations": "Confirmations"
+  totp: "TOTP",
+  login: "Add account",
+  app: "Application",
+  confirmations: "Confirmations",
 };
 
 export const Breadcrumb = () => {
   const location = useLocation();
   const { data: userData } = useInvokeQuery(isLoggedIn);
   const pathSegments = location.pathname.split("/").filter(Boolean);
-  
+
   const availablePaths = [
-    { 
-      path: "/confirmations", 
+    {
+      path: "/confirmations",
       label: "Confirmations",
-      locked: !userData 
+      locked: !userData,
     },
-    { 
-      path: "/login", 
-      label: "Add account" 
+    {
+      path: "/login",
+      label: "Add account",
     },
   ];
 
   return (
     <div className="flex items-center gap-2 mb-6">
-      <Link 
+      <Link
         to="/"
         className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
       >
         <Home className="h-4 w-4" />
         Home
       </Link>
-      
+
       {pathSegments.map((segment, index) => (
         <div key={segment} className="flex items-center gap-2">
           <ChevronRight className="h-4 w-4 text-muted-foreground" />
@@ -62,12 +61,14 @@ export const Breadcrumb = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 {availablePaths
-                  .filter(path => !location.pathname.includes(path.path))
-                  .map(path => {
+                  .filter((path) => !location.pathname.includes(path.path))
+                  .map((path) => {
                     const MenuItem = (
-                      <DropdownMenuItem 
+                      <DropdownMenuItem
                         key={path.path}
-                        className={path.locked ? "opacity-50 cursor-not-allowed" : ""}
+                        className={
+                          path.locked ? "opacity-50 cursor-not-allowed" : ""
+                        }
                         disabled={path.locked}
                       >
                         <div className="flex items-center justify-between w-full text-sm">
@@ -81,9 +82,7 @@ export const Breadcrumb = () => {
                       return (
                         <TooltipProvider key={path.path}>
                           <Tooltip>
-                            <TooltipTrigger asChild>
-                              {MenuItem}
-                            </TooltipTrigger>
+                            <TooltipTrigger asChild>{MenuItem}</TooltipTrigger>
                             <TooltipContent>
                               <p>Please login to access this feature</p>
                             </TooltipContent>
@@ -93,11 +92,7 @@ export const Breadcrumb = () => {
                     }
 
                     return (
-                      <Link 
-                        key={path.path}
-                        to={path.path}
-                        className="w-full"
-                      >
+                      <Link key={path.path} to={path.path} className="w-full">
                         {MenuItem}
                       </Link>
                     );

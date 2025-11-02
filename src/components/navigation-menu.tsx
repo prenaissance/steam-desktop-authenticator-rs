@@ -1,7 +1,12 @@
-import { LucideIcon, Lock } from "lucide-react";
-import { Link } from "react-router-dom";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
+import { Lock, type LucideIcon } from "lucide-react";
+import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 
 interface NavigationItem {
   icon: LucideIcon;
@@ -23,7 +28,9 @@ export const NavigationMenu = ({ items }: NavigationMenuProps) => {
           <Button
             variant="outline"
             className={`w-full cursor-pointer select-none flex-1 h-16 rounded-2xl border-border/50 bg-secondary/30 hover:bg-secondary hover:border-primary/50 transition-all duration-300 flex items-center justify-center gap-3 group ${
-              item.locked ? "cursor-not-allowed text-gray-400 dark:text-gray-600" : ""
+              item.locked
+                ? "cursor-not-allowed text-gray-400 dark:text-gray-600"
+                : ""
             }`}
             onClick={item.locked ? undefined : item.onClick}
           >
@@ -56,7 +63,11 @@ export const NavigationMenu = ({ items }: NavigationMenuProps) => {
           );
         }
 
-        return <div key={item.label} className="flex-1">{ButtonContent}</div>;
+        return (
+          <div key={item.label} className="flex-1">
+            {ButtonContent}
+          </div>
+        );
       })}
     </div>
   );

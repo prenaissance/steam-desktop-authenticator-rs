@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet } from "react-router";
 import { TitleBar } from "./components/titlebar";
 
 export const Layout = () => {
