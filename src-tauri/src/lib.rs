@@ -2,9 +2,9 @@ use std::{env, error::Error, sync::Mutex};
 
 use tauri::Manager;
 
-use crate::account_manager::{AccountsConfig, AccountsInitError};
-
 use std::fs;
+
+use crate::account_manager::accounts_config::{AccountsConfig, AccountsInitError};
 
 mod account;
 mod account_manager;
@@ -24,19 +24,16 @@ impl AppState {
         fs::create_dir_all(&config_dir)?;
         let config_path = config_dir.join("config.json");
 
-        // If the file doesn't exist, create an empty one
-        if !config_path.exists() {
-            fs::write(&config_path, "{}")?;
-        }
-
-        let accounts_config = match AccountsConfig::from_config(&config_path) {
-            Ok(cfg) => cfg,
-            Err(AccountsInitError::IoError(_)) => AccountsConfig::default(),
-            Err(AccountsInitError::DeserializationError) => {
-                fs::write(&config_path, "{}")?;
-                AccountsConfig::default()
-            }
-        };
+        let accounts_config = AccountsConfig::from_config(&config_path)
+            .inspect_err(|err| match err {
+                AccountsInitError::IoError(_) => {
+                    panic!("Could not open the configuration file")
+                }
+                AccountsInitError::DeserializationError => {
+                    panic!("The account configuration file is corrupted")
+                }
+            })
+            .unwrap();
 
         Ok(AppState { accounts_config })
     }
@@ -44,7 +41,6 @@ impl AppState {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    env::set_var("WINIT_UNIX_BACKEND", "wayland");
     tauri::Builder::default()
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_opener::init())
@@ -56,11 +52,11 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             auth::login,
-            auth::get_accounts,
             approval::get_otp,
-            account_manager::is_logged_in,
+            account_manager::commands::is_logged_in,
+            account_manager::commands::get_accounts,
+            account_manager::commands::get_active_account,
             account::commands::get_profile,
-            account_manager::is_logged_in
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

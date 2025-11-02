@@ -1,19 +1,14 @@
 import { useContext } from "react";
 import { AccountsContext } from "~/providers/accounts-provider";
 
-export interface Account {
+export type AccountResponse = {
   username: string;
   avatarUrl?: string;
-  credentials?: {
-    password: string;
-    sharedSecret: string;
-    identitySecret: string;
-  };
-}
+};
 
-export interface StoredAccounts {
-  accounts: Record<string, Account>;
-  activeAccount: string | null;
+export interface AccountsResponse {
+  accounts: AccountResponse[];
+  activeAccountName: string | null;
 }
 
 export const useActiveAccount = () => {

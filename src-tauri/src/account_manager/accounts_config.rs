@@ -1,7 +1,9 @@
-use std::{fs, io, path::Path, sync::Mutex};
+use std::path::Path;
+use std::{fs, io};
 
-use crate::{auth::user_credentials::UserCredentials, AppState};
 use serde::{Deserialize, Serialize};
+
+use crate::auth::user_credentials::UserCredentials;
 
 #[derive(Debug, Serialize, Deserialize, Default)]
 pub struct AccountsConfig {
@@ -41,14 +43,4 @@ impl AccountsConfig {
                     .find(|account| account.account_name.as_str() == active_account_name)
             })
     }
-}
-
-#[tauri::command]
-pub fn is_logged_in(state: tauri::State<'_, Mutex<AppState>>) -> bool {
-    state
-        .lock()
-        .unwrap()
-        .accounts_config
-        .get_active_account()
-        .is_some()
 }
