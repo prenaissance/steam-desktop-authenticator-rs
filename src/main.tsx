@@ -8,5 +8,5 @@ setupTray().catch((err) => console.error("Tray setup failed:", err));
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>
+  </React.StrictMode>,
 );

@@ -1,11 +1,10 @@
-use std::{error::Error, sync::Mutex};
+use std::{env, error::Error, sync::Mutex};
 
-use tauri::{App, Manager};
+use tauri::Manager;
 
 use crate::account_manager::{AccountsConfig, AccountsInitError};
 
-use tauri::{LogicalSize, Size};
-use std::{fs, path::Path};
+use std::fs;
 
 mod account;
 mod account_manager;
@@ -18,7 +17,6 @@ mod steamapi;
 pub struct AppState {
     pub accounts_config: AccountsConfig,
 }
-
 
 impl AppState {
     fn init(app: &tauri::App) -> Result<Self, Box<dyn Error>> {
@@ -33,9 +31,7 @@ impl AppState {
 
         let accounts_config = match AccountsConfig::from_config(&config_path) {
             Ok(cfg) => cfg,
-            Err(AccountsInitError::IoError(_)) => {
-                AccountsConfig::default()
-            }
+            Err(AccountsInitError::IoError(_)) => AccountsConfig::default(),
             Err(AccountsInitError::DeserializationError) => {
                 fs::write(&config_path, "{}")?;
                 AccountsConfig::default()
@@ -48,26 +44,13 @@ impl AppState {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    env::set_var("WINIT_UNIX_BACKEND", "wayland");
     tauri::Builder::default()
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_opener::init())
         .setup(|app| {
             let state = AppState::init(&app)?;
             app.manage(Mutex::new(state));
-
-            if let Some(window) = app.get_webview_window("main") {
-                if let Ok(Some(monitor)) = window.primary_monitor() {
-                    let scale = monitor.scale_factor();
-                    let size = monitor.size();
-
-                    let width = 600.0;
-                    let height = (size.height as f64 / scale) * 0.7;
-
-                    if let Err(e) = window.set_size(Size::Logical(LogicalSize { width, height })) {
-                        eprintln!("Failed to resize window: {:?}", e);
-                    }
-                }
-            }
 
             Ok(())
         })

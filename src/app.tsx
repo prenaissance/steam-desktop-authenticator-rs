@@ -1,5 +1,5 @@
 import "./index.css";
-import { PhysicalSize, Window } from "@tauri-apps/api/window";
+import { LogicalSize, PhysicalSize, Window } from "@tauri-apps/api/window";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { Toaster } from "./components/ui/sonner";
 import { Layout } from "./layout";
@@ -9,19 +9,19 @@ import { AuthSteamPage } from "./pages/auth/steam";
 import { WelcomePage } from "./pages/welcome";
 import { AccountsProvider } from "./providers/accounts-provider";
 
-async function resizeToContent() {
-  requestAnimationFrame(async () => {
-    const content = document.documentElement;
-    const width = content.scrollWidth;
-    const height = content.scrollHeight;
+// async function resizeToContent() {
+//   requestAnimationFrame(async () => {
+//     const content = document.documentElement;
+//     const width = content.scrollWidth;
+//     const height = content.scrollHeight;
 
-    const window = new Window("main");
+//     const window = new Window("main");
 
-    await window.setSize(new PhysicalSize(width, height));
-  });
-}
+//     await window.setSize(new LogicalSize(width, height));
+//   });
+// }
 
-window.addEventListener("DOMContentLoaded", resizeToContent);
+// window.addEventListener("DOMContentLoaded", resizeToContent);
 
 export const App = () => (
   <>

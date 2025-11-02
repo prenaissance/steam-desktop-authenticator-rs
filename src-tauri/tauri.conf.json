@@ -26,7 +26,7 @@
         "height": 780,
         "minWidth": 600,
         "minHeight": 780,
-        "decorations": true,
+        "decorations": false,
         "transparent": false,
         "resizable": false
       }

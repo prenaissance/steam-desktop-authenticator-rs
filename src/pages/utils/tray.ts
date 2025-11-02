@@ -1,6 +1,6 @@
 import { defaultWindowIcon } from "@tauri-apps/api/app";
 import { Menu } from "@tauri-apps/api/menu";
-import { TrayIcon, TrayIconEvent } from "@tauri-apps/api/tray";
+import { TrayIcon } from "@tauri-apps/api/tray";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 
 export async function setupTray() {
@@ -27,7 +27,7 @@ export async function setupTray() {
   });
 
   const tray = await TrayIcon.new({
-    icon: await defaultWindowIcon(),
+    icon: (await defaultWindowIcon()) ?? "",
     tooltip: "Steam Guard Authenticator",
     menu,
     menuOnLeftClick: false,
