@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "lint": "biome lint",
+    "lint:fix": "biome lint --fix"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { LoginRequest, loginFullCredentials } from "~/api/auth";
-import { Account, StoredAccounts } from "~/hooks/use-accounts";
+import { type LoginRequest, loginFullCredentials } from "~/api/auth";
+import type { Account, StoredAccounts } from "~/hooks/use-accounts";
 
 interface AccountsContextType {
   accounts: Record<string, Account>;

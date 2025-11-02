@@ -1,16 +1,16 @@
-import { ExternalLink, Shield } from "lucide-react";
+import { openUrl } from "@tauri-apps/plugin-opener";
 import { motion } from "framer-motion";
+import { ExternalLink, Shield } from "lucide-react";
 import { isLoggedIn } from "~/api/auth";
 import { useInvokeQuery } from "~/api/hooks";
-import { Spinner } from "~/components/ui/spinner";
-import { Card } from "~/components/ui/card";
+import { getTotp } from "~/api/totp";
 import { AccountSelector } from "~/components/account-selector";
 import { NavigationMenu } from "~/components/navigation-menu";
+import { TotpDisplay } from "~/components/totp-display";
+import { Card } from "~/components/ui/card";
+import { Spinner } from "~/components/ui/spinner";
 import { useActiveAccount } from "~/hooks/use-accounts";
 import { getNavigationItems } from "./utils/navigationPaths";
-import { TotpDisplay } from "~/components/totp-display";
-import { getTotp } from "~/api/totp";
-import { openUrl } from '@tauri-apps/plugin-opener';
 
 export const WelcomePage = () => {
   const { data: userData, loading } = useInvokeQuery(isLoggedIn);
@@ -31,8 +31,10 @@ export const WelcomePage = () => {
   }
 
   const handleDocsClick = async () => {
-    await openUrl('https://github.com/prenaissance/steam-desktop-authenticator-rs');
-  }
+    await openUrl(
+      "https://github.com/prenaissance/steam-desktop-authenticator-rs",
+    );
+  };
 
   return (
     <motion.div
