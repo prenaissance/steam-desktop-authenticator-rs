@@ -9,13 +9,20 @@ pub struct AccountsConfig {
     pub active_account_name: Option<String>,
 }
 
+#[derive(Debug)]
+pub enum AccountsInitError {
+    IoError(io::Error),
+    DeserializationError,
+}
+
 impl AccountsConfig {
-    pub fn from_config(config_path: &Path) -> io::Result<Self> {
+    pub fn from_config(config_path: &Path) -> Result<Self, AccountsInitError> {
         if !config_path.exists() {
             return Ok(Default::default());
         }
-        let json_content = fs::read_to_string(&config_path)?;
-        Ok(serde_json::from_str(&json_content).unwrap_or(Default::default()))
+        let json_content =
+            fs::read_to_string(&config_path).map_err(|err| AccountsInitError::IoError(err))?;
+        serde_json::from_str(&json_content).map_err(|_| AccountsInitError::DeserializationError)
     }
 
     pub fn save_to_config(&self, config_path: &Path) -> io::Result<()> {
