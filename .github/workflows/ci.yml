@@ -4,25 +4,11 @@ on:
   pull_request:
 
 jobs:
-  ci-rust:
-    name: Rust CI
+  rust-checks:
+    name: Rust Linting and Format Checks
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      # https://v2.tauri.app/start/prerequisites/#linux
-      - name: Install Tauri System Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            libwebkit2gtk-4.1-dev \
-            build-essential \
-            curl \
-            wget \
-            file \
-            libxdo-dev \
-            libssl-dev \
-            libayatana-appindicator3-dev \
-            librsvg2-dev patchelf
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           toolchain: stable
@@ -31,16 +17,27 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: "./src-tauri"
-      - name: Build
-        run: cargo build --release
-        working-directory: ./src-tauri
       - name: Format Check
         run: cargo fmt -- --check
         working-directory: ./src-tauri
       - name: Lint Check
         run: cargo clippy
         working-directory: ./src-tauri
-      - name: Unit tests
+
+  rust-tests:
+    name: Rust Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+      - name: Setup Rust Cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri"
+
+      - name: Unit Tests
         run: cargo test --lib
         working-directory: ./src-tauri
 
