@@ -1,7 +1,6 @@
-use crate::{
-    account_manager::AccountsConfig, auth::user_credentials::UserCredentials,
-    common::validators::validate_steam_secret, AppState,
-};
+use crate::auth::user_credentials::UserCredentials;
+use crate::common::validators::validate_steam_secret;
+use crate::AppState;
 use serde::{Deserialize, Serialize};
 use std::{
     sync::Mutex,
@@ -137,16 +136,6 @@ pub fn login(app: AppHandle, payload: LoginRequest) -> Result<(), LoginError> {
     config.accounts.push(user_credentials);
     config.save_to_config(&config_path)?;
     Ok(())
-}
-
-#[tauri::command]
-pub fn get_accounts(state: tauri::State<'_, Mutex<AppState>>) -> Vec<String> {
-    let config = &state.lock().unwrap().accounts_config;
-    return config
-        .accounts
-        .iter()
-        .map(|account| account.account_name.clone())
-        .collect();
 }
 
 #[cfg(test)]

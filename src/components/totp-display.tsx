@@ -1,51 +1,9 @@
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Copy } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { toast } from "sonner";
+import { Card, CardContent } from "~/components/ui/card";
 import { Skeleton } from "~/components/ui/skeleton";
-
-interface CircularProgressProps {
-  progress: number; // A value from 0 to 100
-}
-
-function CircularProgress({ progress }: CircularProgressProps) {
-  const radius = 20;
-  const circumference = 2 * Math.PI * radius;
-
-  // Calculate the dash offset
-  const offset = circumference * (1 - progress / 100);
-
-  return (
-    <svg className="w-full h-full" viewBox="0 0 48 48">
-      <title>Progress Circle</title>
-      {/* Start the circle from the top (-rotate-90) */}
-      <g className="transform -rotate-90 origin-center">
-        {/* Background Circle (the gray track) */}
-        <circle
-          cx="24"
-          cy="24"
-          r={radius}
-          strokeWidth="4"
-          fill="transparent"
-          className="stroke-muted" // Uses shadcn 'muted' color
-        />
-
-        {/* Foreground Circle (the moving progress) */}
-        <circle
-          cx="24"
-          cy="24"
-          r={radius}
-          strokeWidth="4"
-          fill="transparent"
-          className="stroke-primary" // Uses shadcn 'primary' color
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          // CSS transition for smooth animation between renders
-          style={{ transition: "stroke-dashoffset 0.25s linear" }}
-        />
-      </g>
-    </svg>
-  );
-}
+import { useActiveAccount } from "~/hooks/use-accounts";
 
 const REFRESH_INTERVAL_SECONDS = 30;
 
@@ -61,6 +19,8 @@ const Totp = ({
   data,
   error,
 }: Omit<TotpDisplayProps, "onRefresh">) => {
+  const [hovered, setHovered] = useState(false);
+
   if (error) {
     return (
       <div className="flex flex-col items-center text-destructive">
@@ -76,14 +36,38 @@ const Totp = ({
 
   const code = data || "-----";
 
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(code);
+    toast.success("Code copied to clipboard");
+  };
+
   return (
-    <span
-      className={`text-3xl font-bold tracking-widest text-foreground transition-opacity ${
-        isLoading ? "opacity-50" : "opacity-100"
-      }`}
-    >
-      {code}
-    </span>
+    <div className="flex justify-center w-full">
+      {/* Wrap the code in a relative container sized to content */}
+      <div
+        onClick={handleCopy}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        className="relative flex items-center cursor-pointer select-none"
+      >
+        <span className="text-2xl font-bold tracking-widest text-foreground">
+          {code}
+        </span>
+
+        <div
+          className={`absolute flex items-center gap-2 ml-2 top-1/2 left-full transform -translate-y-1/2
+          transition-all duration-200 ease-out
+          ${
+            hovered
+              ? "opacity-100 translate-x-0"
+              : "opacity-0 translate-x-4 pointer-events-none"
+          }`}
+        >
+          <Copy className="w-5 h-5 text-white-400" />
+          <span className="text-sm text-muted-foreground">Copy</span>
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -96,43 +80,61 @@ export const TotpDisplay = ({
   const [progress, setProgress] = useState(0);
   const [remainingSeconds, setRemainingSeconds] = useState(0);
   const lastProgressRef = useRef(100);
+  const { activeAccount } = useActiveAccount();
 
   useEffect(() => {
-    const updateProgress = () => {
-      const now = Date.now();
-      const intervalMs = REFRESH_INTERVAL_SECONDS * 1000;
-      const remainder = now % intervalMs;
-      const remainingMs = intervalMs - remainder;
-      const currentProgress = (remainingMs / intervalMs) * 100;
+    onRefresh();
+    setProgress(0);
+    setRemainingSeconds(REFRESH_INTERVAL_SECONDS);
+    lastProgressRef.current = 100;
+  }, [activeAccount]);
+
+  useEffect(() => {
+    const now = Math.floor(Date.now() / 1000);
+    const timeInPeriod = now % REFRESH_INTERVAL_SECONDS;
+    const initialProgress =
+      ((REFRESH_INTERVAL_SECONDS - timeInPeriod) / REFRESH_INTERVAL_SECONDS) *
+      100;
+
+    setProgress(initialProgress);
+    setRemainingSeconds(REFRESH_INTERVAL_SECONDS - timeInPeriod);
+
+    const timer = setInterval(() => {
+      const currentTime = Math.floor(Date.now() / 1000);
+      const currentTimeInPeriod = currentTime % REFRESH_INTERVAL_SECONDS;
+      const currentProgress =
+        ((REFRESH_INTERVAL_SECONDS - currentTimeInPeriod) /
+          REFRESH_INTERVAL_SECONDS) *
+        100;
+
+      setProgress(currentProgress);
+      setRemainingSeconds(REFRESH_INTERVAL_SECONDS - currentTimeInPeriod);
+
       if (currentProgress > lastProgressRef.current) {
-        onRefresh(); // Call the `invalidate` function
+        onRefresh();
       }
       lastProgressRef.current = currentProgress;
-      setProgress(currentProgress);
-      setRemainingSeconds(Math.ceil(remainingMs / 1000));
-    };
+    }, 1000);
 
-    updateProgress();
-    const intervalId = setInterval(updateProgress, 250);
-    return () => clearInterval(intervalId);
+    return () => clearInterval(timer);
   }, [onRefresh]);
 
   return (
-    <Card className="w-full max-w-xs">
-      <CardHeader>
-        <CardTitle>Authentication Code</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col items-center justify-center">
-        <div className="grid w-36 h-36 place-items-center mb-6">
-          <div className="col-start-1 row-start-1 w-full h-full">
-            <CircularProgress progress={progress} />
-          </div>
-          <div className="col-start-1 row-start-1">
-            <Totp isLoading={isLoading} data={data} error={error} />
-          </div>
+    <Card className="w-full bg-card">
+      <CardContent className="w-full flex flex-col items-center justify-center space-y-4">
+        <Totp isLoading={isLoading} data={data} error={error} />
+        <div className="w-full h-3 bg-muted rounded-full overflow-hidden relative">
+          <div
+            className="h-full rounded-full animate-[snake_1s_linear_infinite]"
+            style={{
+              width: `${progress}%`,
+              background:
+                "linear-gradient(90deg, rgba(100,180,255,0.1), rgba(100,180,255,0.5), rgba(255,255,255,0.6), rgba(100,180,255,0.5), rgba(100,180,255,0.1))",
+              transition: "width 0.25s linear",
+            }}
+          />
         </div>
-
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-white w-full text-center">
           {isLoading && !data
             ? "Initializing timer..."
             : `Code expires in ${remainingSeconds}s`}

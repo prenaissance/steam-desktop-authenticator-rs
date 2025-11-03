@@ -9,14 +9,26 @@
     "beforeBuildCommand": "pnpm build",
     "frontendDist": "../dist"
   },
+  "plugins": {
+    "shell": {
+      "allow": [
+        {
+          "name": "open"
+        }
+      ]
+    }
+  },
   "app": {
     "windows": [
       {
         "title": "Steam Desktop Authenticator",
         "width": 600,
-        "height": 800,
+        "height": 780,
         "minWidth": 600,
-        "minHeight": 800
+        "minHeight": 780,
+        "decorations": false,
+        "transparent": false,
+        "resizable": false
       }
     ],
     "security": {
