@@ -1,0 +1,40 @@
+name: Continous Integration
+on:
+  push:
+  pull_request:
+
+jobs:
+  ci-rust:
+    name: Rust CI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+      - name: Format Check
+        run: cargo fmt -- --check
+        working-directory: ./src-tauri
+      - name: Lint Check
+        run: cargo clippy -- -D warnings
+        working-directory: ./src-tauri
+      - name: Unit tests
+        run: cargo test --lib
+        working-directory: ./src-tauri
+
+  ci-frontend:
+    name: Frontend CI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Setup pnpm & Node.js
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          node-version: 24
+      - name: Install Dependencies
+        run: pnpm i --frozen-lockfile
+      - name: Lint Check
+        run: pnpm lint
+      - name: Build
+        run: pnpm build
