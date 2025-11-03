@@ -1,0 +1,75 @@
+name: Continous Integration
+on:
+  push:
+  pull_request:
+
+jobs:
+  rust-checks:
+    name: Rust Linting and Format Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      # https://v2.tauri.app/start/prerequisites/#linux
+      - &install-tauri-deps
+        name: Install Tauri System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            build-essential \
+            curl \
+            wget \
+            file \
+            libxdo-dev \
+            libssl-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev patchelf
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+          components: clippy, rustfmt
+      - name: Setup Rust Cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri"
+      - name: Format Check
+        run: cargo fmt -- --check
+        working-directory: ./src-tauri
+      - name: Lint Check
+        run: cargo clippy
+        working-directory: ./src-tauri
+
+  rust-tests:
+    name: Rust Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - *install-tauri-deps
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+      - name: Setup Rust Cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri"
+
+      - name: Unit Tests
+        run: cargo test --lib
+        working-directory: ./src-tauri
+
+  ci-frontend:
+    name: Frontend CI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Setup pnpm & Node.js
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          node-version: 24
+      - name: Install Dependencies
+        run: pnpm i --frozen-lockfile
+      - name: Lint Check
+        run: pnpm lint
+      - name: Build
+        run: pnpm build

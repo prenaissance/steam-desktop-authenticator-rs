@@ -22,8 +22,7 @@ impl AccountsConfig {
         if !config_path.exists() {
             return Ok(Default::default());
         }
-        let json_content =
-            fs::read_to_string(&config_path).map_err(|err| AccountsInitError::IoError(err))?;
+        let json_content = fs::read_to_string(config_path).map_err(AccountsInitError::IoError)?;
         serde_json::from_str(&json_content).map_err(|_| AccountsInitError::DeserializationError)
     }
 
@@ -31,7 +30,7 @@ impl AccountsConfig {
         if let Some(parent) = config_path.parent() {
             fs::create_dir_all(parent)?;
         }
-        fs::write(&config_path, serde_json::to_string_pretty(&self).unwrap())
+        fs::write(config_path, serde_json::to_string_pretty(&self).unwrap())
     }
 
     pub fn get_active_account(&self) -> Option<&UserCredentials> {
