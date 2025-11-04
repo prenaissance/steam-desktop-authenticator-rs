@@ -1,7 +1,10 @@
 use std::path::Path;
 
 use serde::{Deserialize, Serialize};
-// use steamguard::SteamGuardAccount;
+use steamguard::{
+    token::{Tokens, TwoFactorSecret},
+    SecretString, SteamGuardAccount,
+};
 
 #[derive(Debug, Serialize, Deserialize, Clone, Default)]
 pub struct UserCredentials {
@@ -26,24 +29,25 @@ impl UserCredentials {
     }
 }
 
-// impl From<UserCredentials> for SteamGuardAccount {
-//     fn from(value: UserCredentials) -> Self {
-//         SteamGuardAccount {
-//             account_name: value.account_name,
-//             steam_id: 0,
-//             serial_number: "".to_string(),
-//             revocation_code: value
-//                 .revocation_code
-//                 .unwrap_or_else(|| "".to_string())
-//                 .parse()
-//                 .unwrap(),
-//             shared_secret: (),
-//             token_gid: (),
-//             identity_secret: (),
-//             uri: (),
-//             device_id: (),
-//             secret_1: (),
-//             tokens: (),
-//         }
-//     }
-// }
+impl From<UserCredentials> for SteamGuardAccount {
+    fn from(value: UserCredentials) -> Self {
+        SteamGuardAccount {
+            account_name: value.account_name,
+            steam_id: 0,
+            serial_number: "".to_string(),
+            revocation_code: value
+                .revocation_code
+                .unwrap_or_else(|| "".to_string())
+                .parse()
+                .unwrap(),
+            shared_secret: TwoFactorSecret::parse_shared_secret(value.shared_secret)
+                .expect("Validated before"),
+            identity_secret: SecretString::new(value.identity_secret),
+            token_gid: "".to_string(),
+            uri: SecretString::new("".to_string()),
+            device_id: "testing".to_string(),
+            secret_1: SecretString::new("".to_string()),
+            tokens: Some(Tokens::new(value.access_token, value.refresh_token)),
+        }
+    }
+}

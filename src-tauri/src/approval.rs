@@ -1,17 +1,15 @@
-use std::{
-    sync::Mutex,
-    time::{SystemTime, UNIX_EPOCH},
-};
+use std::time::{SystemTime, UNIX_EPOCH};
 
 use steamguard::token::TwoFactorSecret;
 
 use crate::AppState;
 
 #[tauri::command]
-pub fn get_otp(state: tauri::State<'_, Mutex<AppState>>) -> Option<String> {
-    let state_guard = state.lock().unwrap();
-    let shared_secret = state_guard
+pub fn get_otp(state: tauri::State<'_, AppState>) -> Option<String> {
+    let shared_secret = state
         .accounts_config
+        .lock()
+        .unwrap()
         .get_active_account()
         .map(|account| account.shared_secret.clone());
 

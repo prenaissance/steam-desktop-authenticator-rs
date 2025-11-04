@@ -1,73 +1,15 @@
-use crate::auth::user_credentials::UserCredentials;
-use crate::common::validators::validate_steam_secret;
+use crate::auth::payloads::LoginError;
+use crate::auth::{payloads::LoginRequest, user_credentials::UserCredentials};
 use crate::AppState;
-use serde::{Deserialize, Serialize};
-use std::{
-    sync::Mutex,
-    time::{SystemTime, UNIX_EPOCH},
-};
+use std::time::{SystemTime, UNIX_EPOCH};
 use steamguard::{
     protobufs::steammessages_auth_steamclient::{EAuthSessionGuardType, EAuthTokenPlatformType},
     token::TwoFactorSecret,
     transport::WebApiTransport,
-    userlogin::UpdateAuthSessionError,
     DeviceDetails, UserLogin,
 };
 use tauri::{AppHandle, Manager};
-use validator::{Validate, ValidationErrors};
-
-pub mod user_credentials;
-
-#[derive(Debug, Validate, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct LoginRequest {
-    #[validate(length(min = 1))]
-    username: String,
-
-    #[validate(length(min = 1))]
-    password: String,
-
-    #[validate(length(equal = 28), custom(function = validate_steam_secret))]
-    shared_secret: String,
-
-    #[validate(length(equal = 28), custom(function = validate_steam_secret))]
-    identity_secret: String,
-}
-
-#[derive(Debug, Serialize)]
-#[serde(tag = "type", content = "message")]
-pub enum LoginError {
-    WrongCredentials,
-    ValidationError(String),
-    OtpError,
-    IOError(String),
-    Unimplemented,
-}
-
-impl From<ValidationErrors> for LoginError {
-    fn from(value: ValidationErrors) -> Self {
-        LoginError::ValidationError(value.to_string())
-    }
-}
-
-impl From<UpdateAuthSessionError> for LoginError {
-    fn from(value: UpdateAuthSessionError) -> Self {
-        eprintln!("Encountered {value} kind OTP error");
-        LoginError::OtpError
-    }
-}
-
-impl From<steamguard::LoginError> for LoginError {
-    fn from(_: steamguard::LoginError) -> Self {
-        LoginError::WrongCredentials
-    }
-}
-
-impl From<std::io::Error> for LoginError {
-    fn from(value: std::io::Error) -> Self {
-        LoginError::IOError(value.to_string())
-    }
-}
+use validator::Validate;
 
 #[tauri::command]
 pub fn login(app: AppHandle, payload: LoginRequest) -> Result<(), LoginError> {
@@ -93,8 +35,9 @@ pub fn login(app: AppHandle, payload: LoginRequest) -> Result<(), LoginError> {
             gaming_device_type: 528,
         },
     );
-    let confirmation_methods =
-        user_login.begin_auth_via_credentials(&payload.username, &payload.password)?;
+    let confirmation_methods = user_login
+        .begin_auth_via_credentials(&payload.username, &payload.password)
+        .or(Err(LoginError::WrongCredentials))?;
     let is_device_code_available = confirmation_methods.iter().any(|method| {
         method.confirmation_type == EAuthSessionGuardType::k_EAuthSessionGuardType_DeviceCode
     });
@@ -109,10 +52,12 @@ pub fn login(app: AppHandle, payload: LoginRequest) -> Result<(), LoginError> {
             .unwrap()
             .as_secs(),
     );
-    user_login.submit_steam_guard_code(
-        EAuthSessionGuardType::k_EAuthSessionGuardType_DeviceCode,
-        totp,
-    )?;
+    user_login
+        .submit_steam_guard_code(
+            EAuthSessionGuardType::k_EAuthSessionGuardType_DeviceCode,
+            totp,
+        )
+        .or(Err(LoginError::OtpError))?;
     let tokens = user_login
         .poll_until_tokens()
         .expect("Didn't get any tokens");
@@ -130,11 +75,13 @@ pub fn login(app: AppHandle, payload: LoginRequest) -> Result<(), LoginError> {
             .steam_id(),
         ..Default::default()
     };
-    let state = app.state::<Mutex<AppState>>();
-    let config = &mut state.lock().unwrap().accounts_config;
+    let state = app.state::<AppState>();
+    let config = &mut state.accounts_config.lock().unwrap();
     config.active_account_name = Some(user_credentials.account_name.clone());
     config.accounts.push(user_credentials);
-    config.save_to_config(&config_path)?;
+    config
+        .save_to_config(&config_path)
+        .map_err(|err| LoginError::IOError(err.to_string()))?;
     Ok(())
 }
 
