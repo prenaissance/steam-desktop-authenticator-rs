@@ -35,11 +35,7 @@ impl From<UserCredentials> for SteamGuardAccount {
             account_name: value.account_name,
             steam_id: 0,
             serial_number: "".to_string(),
-            revocation_code: value
-                .revocation_code
-                .unwrap_or_else(|| "".to_string())
-                .parse()
-                .unwrap(),
+            revocation_code: value.revocation_code.unwrap_or_default().parse().unwrap(),
             shared_secret: TwoFactorSecret::parse_shared_secret(value.shared_secret)
                 .expect("Validated before"),
             identity_secret: SecretString::new(value.identity_secret),
