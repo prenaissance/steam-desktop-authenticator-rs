@@ -1,3 +1,5 @@
+use std::sync::MutexGuard;
+
 use serde::Serialize;
 
 use crate::account_manager::accounts_config::AccountsConfig;
@@ -26,8 +28,8 @@ pub struct AccountsResponse {
     active_account_name: Option<String>,
 }
 
-impl From<&AccountsConfig> for AccountsResponse {
-    fn from(value: &AccountsConfig) -> Self {
+impl From<MutexGuard<'_, AccountsConfig>> for AccountsResponse {
+    fn from(value: MutexGuard<'_, AccountsConfig>) -> Self {
         Self {
             accounts: value.accounts.iter().map(|x| x.into()).collect(),
             active_account_name: value.active_account_name.clone(),

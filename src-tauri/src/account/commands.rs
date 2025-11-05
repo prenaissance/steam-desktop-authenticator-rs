@@ -1,5 +1,3 @@
-use std::sync::Mutex;
-
 use serde::Serialize;
 use steamguard::steamapi::ApiRequest;
 use steamguard::token::Tokens;
@@ -29,12 +27,9 @@ pub struct ProfileResponse {
 
 /// Profile picture WIP
 #[tauri::command]
-pub fn get_profile(
-    state: tauri::State<'_, Mutex<AppState>>,
-) -> Result<ProfileResponse, GetProfileError> {
-    let state_guard = state.lock().unwrap();
-    let active_account = state_guard
-        .accounts_config
+pub fn get_profile(state: tauri::State<'_, AppState>) -> Result<ProfileResponse, GetProfileError> {
+    let accounts_config = state.accounts_config.lock().unwrap();
+    let active_account = accounts_config
         .get_active_account()
         .ok_or(GetProfileError::NoValidAccount)?;
     let transport = WebApiTransport::new(reqwest::blocking::Client::new());
