@@ -42,4 +42,15 @@ impl AccountsConfig {
                     .find(|account| account.account_name.as_str() == active_account_name)
             })
     }
+
+    pub fn get_active_account_mut(&mut self) -> Option<&mut UserCredentials> {
+        self.active_account_name
+            .as_ref()
+            .and_then(|active_account_name| {
+                // Use iter_mut() to get mutable references to the items
+                self.accounts
+                    .iter_mut()
+                    .find(|account| account.account_name.as_str() == active_account_name)
+            })
+    }
 }

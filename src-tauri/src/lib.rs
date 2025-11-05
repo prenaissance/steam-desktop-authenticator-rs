@@ -21,6 +21,25 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .setup(|app| {
             let state = AppState::init(app);
+            {
+                let mut accounts_config = state.accounts_config.lock().unwrap();
+                let current_account = accounts_config.get_active_account_mut();
+                if let Some(account) = current_account {
+                    let has_refreshed = account
+                        .refresh_tokens_if_needed(state.transport.clone())
+                        .expect("Did not implement token refresh failure");
+                    if has_refreshed {
+                        accounts_config
+                            .save_to_config(
+                                &app.path()
+                                    .app_config_dir()
+                                    .expect("Expected access to config directory")
+                                    .join("config.json"),
+                            )
+                            .expect("Failed to save new access token to config");
+                    }
+                }
+            }
             app.manage(state);
 
             Ok(())
