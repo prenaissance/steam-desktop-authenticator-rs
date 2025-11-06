@@ -1,10 +1,12 @@
 use std::path::Path;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 use serde::{Deserialize, Serialize};
-use steamguard::{
-    token::{Tokens, TwoFactorSecret},
-    SecretString, SteamGuardAccount,
-};
+use steamguard::refresher::TokenRefresher;
+use steamguard::steamapi::AuthenticationClient;
+use steamguard::token::{Jwt, Tokens, TwoFactorSecret};
+use steamguard::transport::Transport;
+use steamguard::{SecretString, SteamGuardAccount};
 
 #[derive(Debug, Serialize, Deserialize, Clone, Default)]
 pub struct UserCredentials {
@@ -26,6 +28,28 @@ impl UserCredentials {
             return Vec::new();
         }
         unimplemented!()
+    }
+
+    pub fn refresh_tokens_if_needed(&mut self, transport: impl Transport) -> Result<bool, String> {
+        let client = AuthenticationClient::new(transport);
+        let mut refresher = TokenRefresher::new(client);
+        let decoded = Jwt::from(self.access_token.clone())
+            .decode()
+            .map_err(|err| err.to_string())?;
+        let is_expired = decoded.exp
+            < SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .expect("Time went backwards")
+                .as_secs();
+        if !is_expired {
+            return Ok(false);
+        }
+        let tokens = Tokens::new(self.access_token.clone(), self.refresh_token.clone());
+        let access_token = refresher
+            .refresh(self.steam_id, &tokens)
+            .map_err(|err| err.to_string())?;
+        self.access_token = access_token.expose_secret().to_owned();
+        Ok(true)
     }
 }
 
