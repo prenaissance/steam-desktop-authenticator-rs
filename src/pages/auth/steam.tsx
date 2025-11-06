@@ -3,12 +3,7 @@ import { InfoIcon } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import {
-  type LoginError,
-  type LoginRequest,
-  loginFullCredentials,
-  loginRequestSchema,
-} from "~/api/auth";
+import { type LoginRequest, loginRequestSchema } from "~/api/auth";
 import { Button } from "~/components/ui/button";
 import {
   Field,
@@ -23,7 +18,6 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
-  InputGroupInput,
 } from "~/components/ui/input-group";
 import {
   Tooltip,
@@ -56,23 +50,26 @@ export const AuthSteamPage = () => {
   });
 
   const { addAccount } = useActiveAccount();
-  
-  const onSubmit = useCallback(async (data: LoginRequest) => {
-    setIsLoading(true);
-    try {
-      await addAccount(data);
-      toast.success("Steam account added successfully!", {
-        dismissible: true,
-      });
-    } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to add account",
-        { dismissible: true }
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }, [addAccount]);
+
+  const onSubmit = useCallback(
+    async (data: LoginRequest) => {
+      setIsLoading(true);
+      try {
+        await addAccount(data);
+        toast.success("Steam account added successfully!", {
+          dismissible: true,
+        });
+      } catch (err) {
+        toast.error(
+          err instanceof Error ? err.message : "Failed to add account",
+          { dismissible: true },
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [addAccount],
+  );
 
   return (
     <form
@@ -207,7 +204,7 @@ export const AuthSteamPage = () => {
                     error instanceof Error
                       ? error.message
                       : "Failed to read .maFile",
-                    { dismissible: true }
+                    { dismissible: true },
                   );
                 }
               };
@@ -218,8 +215,7 @@ export const AuthSteamPage = () => {
             <div className="flex flex-col items-center justify-center py-4">
               <p className="text-sm font-medium">Upload .maFile</p>
               <p className="text-xs text-muted-foreground mt-1">
-                Click to upload your Steam Desktop
-                Authenticator .maFile
+                Click to upload your Steam Desktop Authenticator .maFile
               </p>
             </div>
           </Dropzone>

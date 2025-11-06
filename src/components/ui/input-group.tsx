@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/a11y/useSemanticElements: Idgaf shartcn 👎 */
 import { cva, type VariantProps } from "class-variance-authority";
 import type * as React from "react";
 import { Button } from "~/components/ui/button";
@@ -60,6 +61,7 @@ function InputGroupAddon({
   ...props
 }: React.ComponentProps<"div"> & VariantProps<typeof inputGroupAddonVariants>) {
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: ???
     <div
       role="group"
       data-slot="input-group-addon"

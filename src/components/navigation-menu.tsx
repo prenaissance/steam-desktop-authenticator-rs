@@ -8,21 +8,21 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 
-interface NavigationItem {
+type NavigationItem = {
   icon: LucideIcon;
   label: string;
   path?: string;
   locked?: boolean;
   onClick?: () => void;
-}
+};
 
-interface NavigationMenuProps {
+type NavigationMenuProps = {
   items: NavigationItem[];
-}
+};
 
 export const NavigationMenu = ({ items }: NavigationMenuProps) => {
   return (
-    <div className="flex gap-3 w-full">
+    <div className="flex gap-3 w-full flex-wrap">
       {items.map((item) => {
         const ButtonContent = (
           <Button

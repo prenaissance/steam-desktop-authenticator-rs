@@ -10,6 +10,7 @@
     "tauri": "tauri",
     "lint": "biome lint",
     "lint:fix": "biome lint --fix",
+    "format": "biome format --write",
     "prepare": "husky"
   },
   "dependencies": {

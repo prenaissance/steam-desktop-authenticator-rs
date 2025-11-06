@@ -1,5 +1,3 @@
-"use client";
-
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, LogOut, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -74,9 +72,17 @@ export const AccountSelector = ({ loading }: AccountSelectorProps) => {
       className="relative p-4 backdrop-blur-xl bg-card/50 border border-border/50 rounded-2xl shadow-lg"
       ref={dropdownRef}
     >
-      <div
+      <button
+        type="button"
+        tabIndex={0}
         className="flex items-center justify-between cursor-pointer gap-2"
         onClick={() => setOpen(!open)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setOpen(!open);
+          }
+        }}
       >
         <div className="flex items-center gap-3">
           <motion.div
@@ -103,6 +109,7 @@ export const AccountSelector = ({ loading }: AccountSelectorProps) => {
         </div>
 
         <button
+          type="button"
           className="p-2 rounded-full hover:bg-secondary/30 transition-colors"
           onClick={async (e) => {
             e.stopPropagation();
@@ -119,7 +126,7 @@ export const AccountSelector = ({ loading }: AccountSelectorProps) => {
         >
           <LogOut className="h-4 w-4" />
         </button>
-      </div>
+      </button>
 
       <AnimatePresence>
         {open && accountsArray.length > 1 && (
@@ -133,7 +140,8 @@ export const AccountSelector = ({ loading }: AccountSelectorProps) => {
             {accountsArray
               .filter((acc) => acc.username !== account.username)
               .map((acc) => (
-                <div
+                <button
+                  type="button"
                   key={acc.username}
                   className="flex items-center gap-3 p-4 hover:bg-card/50 cursor-pointer transition-colors"
                   onClick={async () => {
@@ -164,7 +172,7 @@ export const AccountSelector = ({ loading }: AccountSelectorProps) => {
                     </div>
                   )}
                   <p className="font-medium">{acc.username}</p>
-                </div>
+                </button>
               ))}
           </motion.div>
         )}

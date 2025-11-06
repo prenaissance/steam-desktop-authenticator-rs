@@ -25,7 +25,7 @@ export type InvokeQueryResponse<TResponse, TError> = InvokeResponse<
 };
 
 export const useInvokeQuery = <TResponse = unknown, TError = Error>(
-  query: () => Promise<TResponse>
+  query: () => Promise<TResponse>,
 ) => {
   const [data, setData] = useState<TResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -74,9 +74,9 @@ type MutateResponse<TInput, TResponse, TError> = InvokeResponse<
 export const useInvokeMutation = <
   TInput = unknown,
   TResponse = unknown,
-  TError = Error
+  TError = Error,
 >(
-  mutation: (input: TInput) => Promise<TResponse>
+  mutation: (input: TInput) => Promise<TResponse>,
 ) => {
   const [data, setData] = useState<TResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -96,7 +96,7 @@ export const useInvokeMutation = <
         setLoading(false);
       }
     },
-    [mutation]
+    [mutation],
   );
 
   return {

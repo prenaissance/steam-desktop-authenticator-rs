@@ -44,7 +44,8 @@ const Totp = ({
   return (
     <div className="flex justify-center w-full">
       {/* Wrap the code in a relative container sized to content */}
-      <div
+      <button
+        type="button"
         onClick={handleCopy}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
@@ -66,7 +67,7 @@ const Totp = ({
           <Copy className="w-5 h-5 text-white-400" />
           <span className="text-sm text-muted-foreground">Copy</span>
         </div>
-      </div>
+      </button>
     </div>
   );
 };
@@ -87,7 +88,7 @@ export const TotpDisplay = ({
     setProgress(0);
     setRemainingSeconds(REFRESH_INTERVAL_SECONDS);
     lastProgressRef.current = 100;
-  }, [activeAccount]);
+  }, [onRefresh]);
 
   useEffect(() => {
     const now = Math.floor(Date.now() / 1000);
