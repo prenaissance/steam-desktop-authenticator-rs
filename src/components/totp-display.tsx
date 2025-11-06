@@ -81,7 +81,7 @@ export const TotpDisplay = ({
   const [progress, setProgress] = useState(0);
   const [remainingSeconds, setRemainingSeconds] = useState(0);
   const lastProgressRef = useRef(100);
-  const { activeAccount } = useActiveAccount();
+  const { activeAccount: _activeAccount } = useActiveAccount();
 
   useEffect(() => {
     onRefresh();
