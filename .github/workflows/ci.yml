@@ -69,7 +69,7 @@ jobs:
           node-version: 24
       - name: Install Dependencies
         run: pnpm i --frozen-lockfile
-      - name: Lint Check
-        run: pnpm lint
+      - name: Lint & Formatting Check
+        run: pnpm exec biome ci
       - name: Build
         run: pnpm build
