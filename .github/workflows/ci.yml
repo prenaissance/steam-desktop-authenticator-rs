@@ -70,7 +70,6 @@ jobs:
       - name: Install Dependencies
         run: pnpm i --frozen-lockfile
       - name: Lint & Formatting Check
-        # biome ci is broken for tailwind directives
-        run: pnpm exec biome check
+        run: pnpm exec biome ci
       - name: Build
         run: pnpm build
