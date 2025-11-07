@@ -1,7 +1,6 @@
 import { ChevronDown, ChevronRight, Home, Lock } from "lucide-react";
 import { Link, useLocation } from "react-router";
-import { isLoggedIn } from "~/api/auth";
-import { useInvokeQuery } from "~/api/hooks";
+import { useIsLoggedIn } from "~/api/auth";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,7 +24,7 @@ const pathMap: Record<string, string> = {
 
 export const Breadcrumb = () => {
   const location = useLocation();
-  const { data: userData } = useInvokeQuery(isLoggedIn);
+  const { data: userData } = useIsLoggedIn();
   const pathSegments = location.pathname.split("/").filter(Boolean);
 
   const availablePaths = [

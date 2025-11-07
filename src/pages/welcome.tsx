@@ -1,28 +1,18 @@
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { motion } from "framer-motion";
 import { ExternalLink, Shield } from "lucide-react";
-import { isLoggedIn } from "~/api/auth";
-import { useInvokeQuery } from "~/api/hooks";
-import { getTotp } from "~/api/totp";
+import { useIsLoggedIn } from "~/api/auth";
 import { AccountSelector } from "~/components/account-selector";
 import { NavigationMenu } from "~/components/navigation-menu";
 import { TotpDisplay } from "~/components/totp-display";
 import { Card } from "~/components/ui/card";
 import { Spinner } from "~/components/ui/spinner";
-import { useActiveAccount } from "~/hooks/use-accounts";
 import { getNavigationItems } from "./utils/navigationPaths";
 
 export const WelcomePage = () => {
-  const { data: userData, loading } = useInvokeQuery(isLoggedIn);
-  const {
-    loading: otpLoading,
-    data: otpData,
-    error,
-    invalidate,
-  } = useInvokeQuery(getTotp);
-  const { loading: accountLoading } = useActiveAccount();
+  const { data: userData, isFetching: logStatusFetching } = useIsLoggedIn();
 
-  if (loading || accountLoading) {
+  if (logStatusFetching) {
     return (
       <div className="flex justify-center items-center h-full">
         <Spinner className="w-10 h-10" />
@@ -63,16 +53,11 @@ export const WelcomePage = () => {
         <h2 className="text-muted-foreground font-semibold mb-3">
           Active Account
         </h2>
-        <AccountSelector loading={accountLoading} />
+        <AccountSelector />
       </Card>
       {userData && (
         <div className="w-full flex flex-col items-center justify-center">
-          <TotpDisplay
-            isLoading={otpLoading}
-            data={otpData}
-            error={error}
-            onRefresh={invalidate}
-          />
+          <TotpDisplay />
         </div>
       )}
       <NavigationMenu items={getNavigationItems(!userData)} />

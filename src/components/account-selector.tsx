@@ -2,20 +2,18 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, LogOut, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { useInvokeQuery } from "~/api/hooks";
-import { getTotp } from "~/api/totp";
-import { useActiveAccount } from "~/hooks/use-accounts";
+import { useAccounts } from "~/api/account";
+import { useTotp } from "~/api/totp";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Card } from "./ui/card";
 
-interface AccountSelectorProps {
-  loading?: boolean;
-}
-
-export const AccountSelector = ({ loading }: AccountSelectorProps) => {
-  const { accounts, account, setActiveAccount, removeAccount } =
-    useActiveAccount();
-  const { invalidate } = useInvokeQuery(getTotp);
+export const AccountSelector = () => {
+  const { data, isFetching } = useAccounts();
+  const accounts = data?.accounts || [];
+  const activeAccount = accounts.find(
+    (acc) => acc.username === data?.activeAccountName,
+  );
+  const { refetch } = useTotp();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -32,7 +30,7 @@ export const AccountSelector = ({ loading }: AccountSelectorProps) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  if (loading) {
+  if (isFetching) {
     return (
       <Card className="p-4">
         <div className="flex items-center gap-4">
@@ -46,7 +44,7 @@ export const AccountSelector = ({ loading }: AccountSelectorProps) => {
     );
   }
 
-  if (!account) {
+  if (!activeAccount) {
     return (
       <Card className="p-4">
         <div className="flex items-center gap-4">
@@ -61,11 +59,6 @@ export const AccountSelector = ({ loading }: AccountSelectorProps) => {
       </Card>
     );
   }
-
-  const accountsArray = Object.entries(accounts).map(([username, acc]) => ({
-    username,
-    ...acc,
-  }));
 
   return (
     <Card
@@ -92,11 +85,11 @@ export const AccountSelector = ({ loading }: AccountSelectorProps) => {
             <ChevronDown className="h-4 w-4 text-muted-foreground" />
           </motion.div>
 
-          {account.avatarUrl ? (
+          {activeAccount.avatarUrl ? (
             <Avatar className="h-12 w-12 ring-1 ring-primary/20">
-              <AvatarImage src={account.avatarUrl} />
+              <AvatarImage src={activeAccount.avatarUrl} />
               <AvatarFallback>
-                {account.username[0].toUpperCase()}
+                {activeAccount.username[0].toUpperCase()}
               </AvatarFallback>
             </Avatar>
           ) : (
@@ -105,18 +98,21 @@ export const AccountSelector = ({ loading }: AccountSelectorProps) => {
             </div>
           )}
 
-          <p className="font-medium text-foreground">{account.username}</p>
+          <p className="font-medium text-foreground">
+            {activeAccount.username}
+          </p>
         </div>
 
         <button
           type="button"
-          className="p-2 rounded-full hover:bg-secondary/30 transition-colors"
+          className="p-2 rounded-full cursor-pointer hover:bg-secondary/30 transition-colors"
           onClick={async (e) => {
             e.stopPropagation();
             try {
-              if (!account.username) return toast.error("No account selected");
-              await removeAccount(account.username);
-              toast.success(`Logged out from ${account.username}`);
+              if (!activeAccount.username)
+                return toast.error("No account selected");
+              // TODO call command to remove
+              toast.success(`Logged out from ${activeAccount.username}`);
             } catch (err) {
               toast.error(
                 err instanceof Error ? err.message : "Failed to logout",
@@ -129,7 +125,7 @@ export const AccountSelector = ({ loading }: AccountSelectorProps) => {
       </button>
 
       <AnimatePresence>
-        {open && accountsArray.length > 1 && (
+        {open && accounts.length > 1 && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: -10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -137,8 +133,8 @@ export const AccountSelector = ({ loading }: AccountSelectorProps) => {
             transition={{ duration: 0.2 }}
             className="absolute top-full left-0 w-full mt-2 rounded-2xl border border-border/50 bg-card/70 backdrop-blur-md shadow-lg flex flex-col overflow-hidden z-50"
           >
-            {accountsArray
-              .filter((acc) => acc.username !== account.username)
+            {accounts
+              .filter((acc) => acc.username !== activeAccount.username)
               .map((acc) => (
                 <button
                   type="button"
@@ -146,8 +142,8 @@ export const AccountSelector = ({ loading }: AccountSelectorProps) => {
                   className="flex items-center gap-3 p-4 hover:bg-card/50 cursor-pointer transition-colors"
                   onClick={async () => {
                     try {
-                      await setActiveAccount(acc.username);
-                      invalidate();
+                      // TODO: call command to switch account
+                      refetch();
                       toast.success(`Switched to ${acc.username}`);
                       setOpen(false);
                     } catch (err) {
