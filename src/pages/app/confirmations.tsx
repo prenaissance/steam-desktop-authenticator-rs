@@ -1,9 +1,8 @@
 import { Breadcrumb } from "~/components/breadcrumb";
-import { useNotify } from "~/hooks/use-notify";
+import { Button } from "~/components/ui/button";
+import { notify } from "~/utilities/notify";
 
 export const ConfirmationsPage = () => {
-  const { notify } = useNotify();
-
   const handleClick = () => {
     notify({
       body: "Anyone here?",
@@ -18,12 +17,13 @@ export const ConfirmationsPage = () => {
         </div>
         <div className="flex flex-col items-center justify-center p-10">
           <h1 className="text-2xl font-bold">Confirmations Page</h1>
-          <button
+          <Button
+            type="button"
             onClick={handleClick}
             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
           >
             Load Confirmations
-          </button>
+          </Button>
         </div>
       </div>
     </div>

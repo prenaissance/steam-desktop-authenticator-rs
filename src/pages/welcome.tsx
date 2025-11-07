@@ -45,11 +45,11 @@ export const WelcomePage = () => {
     >
       <header className="flex justify-between items-center relative z-10">
         <div className="flex items-center gap-3">
-          <div className="p-3 rounded-2xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/30">
+          <div className="p-3 rounded-2xl bg-linear-to-br from-primary to-accent shadow-lg shadow-primary/30">
             <Shield className="h-7 w-7 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
               Steam Guard
             </h1>
             <p className="text-muted-foreground text-sm">

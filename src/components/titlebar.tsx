@@ -1,32 +1,31 @@
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { Minus, X } from "lucide-react";
-import { useCallback } from "react";
 import { Button } from "./ui/button";
 
+const startDrag = async () => {
+  const window = getCurrentWindow();
+  try {
+    await window.startDragging();
+  } catch (e) {
+    console.error("Window drag failed:", e);
+  }
+};
+
+const handleMinimize = async () => {
+  const window = getCurrentWindow();
+  await window.minimize();
+};
+
+const handleClose = async () => {
+  const window = getCurrentWindow();
+  await window.hide();
+};
+
 export const TitleBar = () => {
-  const startDrag = async () => {
-    const window = getCurrentWindow();
-    try {
-      await window.startDragging();
-    } catch (e) {
-      console.error("Window drag failed:", e);
-    }
-  };
-
-  const handleMinimize = useCallback(async () => {
-    const window = getCurrentWindow();
-    await window.minimize();
-  }, []);
-
-  const handleClose = useCallback(async () => {
-    const window = getCurrentWindow();
-    await window.hide();
-  }, []);
-
   return (
     <nav
       onMouseDown={startDrag}
-      className="fixed top-0 left-0 right-0 h-9 flex items-center justify-end gap-2 px-2 bg-background"
+      className="fixed w-full top-0 left-0 right-0 h-9 flex items-center justify-end gap-2 px-2 bg-background"
     >
       <Button
         variant="ghost"
