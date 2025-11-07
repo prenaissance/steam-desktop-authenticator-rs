@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import { invoke } from "@tauri-apps/api/core";
 import { z } from "zod/v4";
 
@@ -36,3 +37,9 @@ export const isLoggedIn = async () => {
   const response = await invoke<IsLoggedInResponse>("is_logged_in");
   return response;
 };
+
+export const useIsLoggedIn = () =>
+  useQuery({
+    queryKey: ["auth", "is-logged-in"],
+    queryFn: isLoggedIn,
+  });

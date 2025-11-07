@@ -29,7 +29,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { useActiveAccount } from "~/hooks/use-accounts";
 
 interface MaFile {
   account_name: string;
@@ -49,27 +48,22 @@ export const AuthSteamPage = () => {
     resolver: zodResolver(loginRequestSchema),
   });
 
-  const { addAccount } = useActiveAccount();
-
-  const onSubmit = useCallback(
-    async (data: LoginRequest) => {
-      setIsLoading(true);
-      try {
-        await addAccount(data);
-        toast.success("Steam account added successfully!", {
-          dismissible: true,
-        });
-      } catch (err) {
-        toast.error(
-          err instanceof Error ? err.message : "Failed to add account",
-          { dismissible: true },
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [addAccount],
-  );
+  const onSubmit = useCallback(async (_data: LoginRequest) => {
+    setIsLoading(true);
+    try {
+      // TODO call command
+      toast.success("Steam account added successfully!", {
+        dismissible: true,
+      });
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Failed to add account",
+        { dismissible: true },
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   return (
     <form

@@ -1,4 +1,5 @@
 import "./index.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { Toaster } from "./components/ui/sonner";
 import { Layout } from "./layout";
@@ -6,11 +7,18 @@ import { ConfirmationsPage } from "./pages/app/confirmations";
 import { TotpPage } from "./pages/app/totp";
 import { AuthSteamPage } from "./pages/auth/steam";
 import { WelcomePage } from "./pages/welcome";
-import { AccountsProvider } from "./providers/accounts-provider";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 export const App = () => (
   <>
-    <AccountsProvider>
+    <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
           <Route element={<Layout />}>
@@ -21,7 +29,7 @@ export const App = () => (
           </Route>
         </Routes>
       </BrowserRouter>
-    </AccountsProvider>
+    </QueryClientProvider>
     <Toaster />
   </>
 );

@@ -1,24 +1,19 @@
 import { AlertTriangle, Copy } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { useTotp } from "~/api/totp";
 import { Card, CardContent } from "~/components/ui/card";
 import { Skeleton } from "~/components/ui/skeleton";
-import { useActiveAccount } from "~/hooks/use-accounts";
 
 const REFRESH_INTERVAL_SECONDS = 30;
 
-type TotpDisplayProps = {
+type TotpProps = {
   isLoading: boolean;
   data: string | null;
   error: Error | null;
-  onRefresh: () => void;
 };
 
-const Totp = ({
-  isLoading,
-  data,
-  error,
-}: Omit<TotpDisplayProps, "onRefresh">) => {
+const Totp = ({ isLoading, data, error }: TotpProps) => {
   const [hovered, setHovered] = useState(false);
 
   if (error) {
@@ -72,23 +67,18 @@ const Totp = ({
   );
 };
 
-export const TotpDisplay = ({
-  isLoading,
-  data,
-  error,
-  onRefresh,
-}: TotpDisplayProps) => {
+export const TotpDisplay = () => {
+  const { isLoading, data, error, refetch } = useTotp();
   const [progress, setProgress] = useState(0);
   const [remainingSeconds, setRemainingSeconds] = useState(0);
   const lastProgressRef = useRef(100);
-  const { activeAccount: _activeAccount } = useActiveAccount();
 
   useEffect(() => {
-    onRefresh();
+    refetch();
     setProgress(0);
     setRemainingSeconds(REFRESH_INTERVAL_SECONDS);
     lastProgressRef.current = 100;
-  }, [onRefresh]);
+  }, [refetch]);
 
   useEffect(() => {
     const now = Math.floor(Date.now() / 1000);
@@ -112,18 +102,18 @@ export const TotpDisplay = ({
       setRemainingSeconds(REFRESH_INTERVAL_SECONDS - currentTimeInPeriod);
 
       if (currentProgress > lastProgressRef.current) {
-        onRefresh();
+        refetch();
       }
       lastProgressRef.current = currentProgress;
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [onRefresh]);
+  }, [refetch]);
 
   return (
     <Card className="w-full bg-card">
       <CardContent className="w-full flex flex-col items-center justify-center space-y-4">
-        <Totp isLoading={isLoading} data={data} error={error} />
+        <Totp isLoading={isLoading} data={data ?? null} error={error} />
         <div className="w-full h-3 bg-muted rounded-full overflow-hidden relative">
           <div
             className="h-full rounded-full animate-[snake_1s_linear_infinite]"
