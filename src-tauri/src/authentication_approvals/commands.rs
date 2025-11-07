@@ -2,9 +2,7 @@ use steamguard::protobufs::steammessages_auth_steamclient::CAuthentication_GetAu
 use steamguard::token::Tokens;
 use steamguard::{ApproverError, LoginApprover, SteamGuardAccount};
 
-use crate::authentication_approvals::payloads::{
-    ApproveQrLoginRequest, AuthSessionResponse, GetApprovalsError,
-};
+use super::payloads::{ApproveQrLoginRequest, AuthSessionResponse, GetApprovalsError};
 use crate::AppState;
 
 #[tauri::command]

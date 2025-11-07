@@ -11,6 +11,7 @@ mod approval;
 mod auth;
 mod authentication_approvals;
 mod common;
+mod confirmations;
 mod protobufs;
 mod steamapi;
 
@@ -52,7 +53,8 @@ pub fn run() {
             account_manager::commands::get_active_account,
             account::commands::get_profile,
             authentication_approvals::commands::get_sessions,
-            authentication_approvals::commands::approve_qr_login
+            authentication_approvals::commands::approve_qr_login,
+            confirmations::commands::get_confirmations,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
