@@ -1,4 +1,4 @@
-import { LogIn, ShoppingCart } from "lucide-react";
+import { LogIn, ShieldCheck, ShoppingCart } from "lucide-react";
 
 export const getNavigationItems = (isLocked?: boolean) => [
   {
@@ -11,5 +11,10 @@ export const getNavigationItems = (isLocked?: boolean) => [
     icon: LogIn,
     label: "Add account",
     path: "/login",
+  },
+  {
+    icon: ShieldCheck,
+    label: "Auth sessions",
+    path: "/auth-sessions",
   },
 ];

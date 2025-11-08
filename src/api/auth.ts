@@ -1,4 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
+import {
+  type UseMutationOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { invoke } from "@tauri-apps/api/core";
 import { z } from "zod/v4";
 
@@ -27,8 +32,26 @@ export const loginFullCredentials = async (loginRequest: LoginRequest) => {
   const response = await invoke<LoginResponse>("login", {
     payload: loginRequest,
   });
-  console.log(response);
   return response;
+};
+
+export const useLoginFullCredentialsMutation = (
+  options?: Omit<
+    UseMutationOptions<LoginResponse, LoginError, LoginRequest>,
+    "mutationKey" | "mutationFn"
+  >,
+) => {
+  const queryClient = useQueryClient();
+  const { onSuccess, ...rest } = options || {};
+  return useMutation<LoginResponse, LoginError, LoginRequest>({
+    mutationKey: ["auth", "login-full-credentials"],
+    mutationFn: loginFullCredentials,
+    onSuccess: (...args) => {
+      queryClient.invalidateQueries({ queryKey: ["auth"] });
+      onSuccess?.(...args);
+    },
+    ...rest,
+  });
 };
 
 export type IsLoggedInResponse = boolean;

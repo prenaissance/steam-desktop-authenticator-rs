@@ -37,6 +37,11 @@ export const Breadcrumb = () => {
       path: "/login",
       label: "Add account",
     },
+    {
+      path: "/auth-sessions",
+      label: "Auth sessions",
+      locked: !userData,
+    },
   ];
 
   return (

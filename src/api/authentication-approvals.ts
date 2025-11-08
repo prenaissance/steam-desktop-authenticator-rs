@@ -25,7 +25,7 @@ export enum ESessionPersistence {
 
 export type AuthSessionResponse = {
   /** format: u64 */
-  client_id: number;
+  clientId: number;
   ip?: string | null;
   geoloc?: string | null;
   city?: string | null;
@@ -78,10 +78,7 @@ export const approveSession = async (
   payload: AuthApproveRequest,
 ): Promise<void> =>
   invoke<void>("approve_session", {
-    payload: {
-      client_id: payload.clientId,
-      persistence: payload.persistence,
-    },
+    payload: payload,
   });
 
 export const useApproveSession = (

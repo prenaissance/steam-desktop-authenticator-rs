@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { Toaster } from "./components/ui/sonner";
 import { Layout } from "./layout";
+import { AuthConfirmationsPage } from "./pages/app/auth-confirmations";
 import { ConfirmationsPage } from "./pages/app/confirmations";
 import { TotpPage } from "./pages/app/totp";
 import { AuthSteamPage } from "./pages/auth/steam";
@@ -27,6 +28,7 @@ export const App = () => (
             <Route path="/login" element={<AuthSteamPage />} />
             <Route path="/totp" element={<TotpPage />} />
             <Route path="/confirmations" element={<ConfirmationsPage />} />
+            <Route path="/auth-sessions" element={<AuthConfirmationsPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
