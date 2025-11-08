@@ -2,8 +2,8 @@
 name = "steam-desktop-authenticator-rs"
 version = "0.1.0"
 description = "A Tauri App"
-authors = ["you"]
-edition = "2021"
+authors = ["prenaissance"]
+edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -34,3 +34,5 @@ gethostname = "1.1.0"
 protobuf = "3.7.2"
 tauri-plugin-notification = "2.3.3"
 chrono = { version = "0.4.42", features = ["serde"] }
+log = { version = "0.4.28", features = ["std", "serde"] }
+tauri-plugin-log = "2"

@@ -13,8 +13,9 @@ pub fn get_confirmations(
         .ok_or(GetConfirmationsError::Unauthorized)?;
     let steam_guard_account: SteamGuardAccount = active_account.clone().into();
     let confirmer = Confirmer::new(state.transport.clone(), &steam_guard_account);
-    let confirmations = confirmer
-        .get_confirmations()
-        .map_err(|_| GetConfirmationsError::ApiError)?;
+    let confirmations = confirmer.get_confirmations().map_err(|err| {
+        log::debug!("Encountered error when fetching confirmations from Steam: {err:?}");
+        GetConfirmationsError::ApiError
+    })?;
     Ok(confirmations.into_iter().map(|x| x.into()).collect())
 }

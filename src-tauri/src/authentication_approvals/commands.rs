@@ -18,21 +18,38 @@ pub fn get_sessions(
         active_account.refresh_token.clone(),
     );
     let login_approver = LoginApprover::new(state.transport.clone(), &tokens);
-    let approvals: Result<Vec<CAuthentication_GetAuthSessionInfo_Response>, _> = login_approver
-        .list_auth_sessions()
-        .map_err(|err| match err {
-            ApproverError::Unauthorized => GetApprovalsError::Unauthorized,
-            _ => GetApprovalsError::Unknown,
-        })?
-        .into_iter()
-        .map(|client_id| login_approver.get_auth_session_info(client_id))
-        .collect();
+    let approvals: Result<Vec<(u64, CAuthentication_GetAuthSessionInfo_Response)>, _> =
+        login_approver
+            .list_auth_sessions()
+            .map_err(|err| match err {
+                ApproverError::Unauthorized => GetApprovalsError::Unauthorized,
+                _ => GetApprovalsError::Unknown,
+            })?
+            .into_iter()
+            .map(|client_id| {
+                login_approver
+                    .get_auth_session_info(client_id)
+                    .map(|response| (client_id, response))
+            })
+            .collect();
+
     approvals
-        .map_err(|err| match err {
-            ApproverError::Unauthorized => GetApprovalsError::Unauthorized,
-            _ => GetApprovalsError::Unknown,
+        .map_err(|err| {
+            log::debug!("Failed to fetch sessions: {err:?}");
+            match err {
+                ApproverError::Unauthorized => GetApprovalsError::Unauthorized,
+                _ => GetApprovalsError::Unknown,
+            }
         })
-        .map(|vec| vec.into_iter().map(AuthSessionResponse::from).collect())
+        .map(|vec| {
+            log::trace!(
+                "Loaded {} approval ids. Hydrating detailed information...",
+                vec.len()
+            );
+            vec.into_iter()
+                .map(|(client_id, response)| AuthSessionResponse::new(client_id, response))
+                .collect()
+        })
 }
 
 #[tauri::command]
