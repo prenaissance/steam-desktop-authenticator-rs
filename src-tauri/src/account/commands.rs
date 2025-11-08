@@ -3,11 +3,11 @@ use steamguard::steamapi::ApiRequest;
 use steamguard::token::Tokens;
 use steamguard::transport::{Transport, TransportError, WebApiTransport};
 
+use crate::protobufs::steammessages_player_steamclient::cplayer_get_player_link_details_response::PlayerLinkDetails;
 use crate::protobufs::steammessages_player_steamclient::{
-    cplayer_get_player_link_details_response::PlayerLinkDetails,
     CPlayer_GetPlayerLinkDetails_Request, CPlayer_GetPlayerLinkDetails_Response,
 };
-use crate::{impl_buildable_req, AppState};
+use crate::{AppState, impl_buildable_req};
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
