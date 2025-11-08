@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { useSessions } from "~/api/auth";
+import { useSessions } from "~/api/authentication-approvals";
 import { useConfirmations } from "~/api/confirmations";
 import { Breadcrumb } from "~/components/breadcrumb";
 import { Button } from "~/components/ui/button";
@@ -14,6 +14,7 @@ const handleClick = () => {
 
 export const ConfirmationsPage = () => {
   const { data, error } = useConfirmations({});
+  // TODO: use this on authentication approvals page
   const sessionsQuery = useSessions();
   console.log(sessionsQuery.data);
   useEffect(() => {
