@@ -1,6 +1,6 @@
 import L from "leaflet";
 import { Check, Globe2, MapPin, Monitor, X } from "lucide-react";
-import { type FC, useState } from "react";
+import { ComponentType, type FC, SVGProps, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { toast } from "sonner";
 import {
@@ -180,7 +180,7 @@ const InfoCard = ({
   value,
   mono = false,
 }: {
-  icon: unknown;
+  icon: ComponentType<SVGProps<SVGSVGElement>>;
   label: string;
   value: string | null | undefined;
   mono?: boolean;
