@@ -1,4 +1,4 @@
-use crate::account_manager::accounts_response::{AccountResponse, AccountsResponse};
+use super::accounts_response::{AccountResponse, AccountsResponse};
 use crate::AppState;
 
 #[tauri::command]

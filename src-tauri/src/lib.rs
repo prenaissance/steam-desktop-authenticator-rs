@@ -11,12 +11,32 @@ mod approval;
 mod auth;
 mod authentication_approvals;
 mod common;
+mod confirmations;
 mod protobufs;
 mod steamapi;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    let enabled_targets = env::var("APP_LOG_TARGET_PREFIXES")
+        .unwrap_or_else(|_| "steam_desktop_authenticator_rs".to_string())
+        .split(',')
+        .map(|s| s.to_string())
+        .collect::<Vec<String>>();
+
     tauri::Builder::default()
+        .plugin(
+            tauri_plugin_log::Builder::new()
+                .level(tauri_plugin_log::log::LevelFilter::Debug)
+                .filter(move |metadata| {
+                    enabled_targets
+                        .iter()
+                        .any(|prefix| metadata.target().starts_with(prefix))
+                })
+                // .target(tauri_plugin_log::Target::new(
+                //     tauri_plugin_log::TargetKind::Stdout,
+                // ))
+                .build(),
+        )
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_opener::init())
         .setup(|app| {
@@ -52,7 +72,10 @@ pub fn run() {
             account_manager::commands::get_active_account,
             account::commands::get_profile,
             authentication_approvals::commands::get_sessions,
-            authentication_approvals::commands::approve_qr_login
+            authentication_approvals::commands::approve_qr_login,
+            authentication_approvals::commands::approve_session,
+            authentication_approvals::commands::deny_session,
+            confirmations::commands::get_confirmations,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -1,13 +1,29 @@
+import { useEffect } from "react";
+import { toast } from "sonner";
+import { useSessions } from "~/api/authentication-approvals";
+import { useConfirmations } from "~/api/confirmations";
 import { Breadcrumb } from "~/components/breadcrumb";
 import { Button } from "~/components/ui/button";
 import { notify } from "~/utilities/notify";
 
+const handleClick = () => {
+  notify({
+    body: "Anyone here?",
+  });
+};
+
 export const ConfirmationsPage = () => {
-  const handleClick = () => {
-    notify({
-      body: "Anyone here?",
-    });
-  };
+  const { data, error } = useConfirmations({});
+  // TODO: use this on authentication approvals page
+  const sessionsQuery = useSessions();
+  console.log(sessionsQuery.data);
+  useEffect(() => {
+    if (error) {
+      toast(`Error loading confirmations: ${error.type}`);
+      console.error(error);
+    }
+  }, [error]);
+  console.log(data);
 
   return (
     <div className="flex flex-col items-center w-full">

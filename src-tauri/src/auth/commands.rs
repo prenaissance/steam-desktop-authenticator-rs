@@ -1,13 +1,14 @@
-use crate::auth::payloads::LoginError;
-use crate::auth::{payloads::LoginRequest, user_credentials::UserCredentials};
-use crate::AppState;
 use std::time::{SystemTime, UNIX_EPOCH};
-use steamguard::{
-    protobufs::steammessages_auth_steamclient::{EAuthSessionGuardType, EAuthTokenPlatformType},
-    token::TwoFactorSecret,
-    transport::WebApiTransport,
-    DeviceDetails, UserLogin,
+
+use super::payloads::{LoginError, LoginRequest};
+use super::user_credentials::UserCredentials;
+use crate::AppState;
+use steamguard::protobufs::steammessages_auth_steamclient::{
+    EAuthSessionGuardType, EAuthTokenPlatformType,
 };
+use steamguard::token::TwoFactorSecret;
+use steamguard::transport::WebApiTransport;
+use steamguard::{DeviceDetails, UserLogin};
 use tauri::{AppHandle, Manager};
 use validator::Validate;
 
