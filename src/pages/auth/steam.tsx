@@ -1,9 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InfoIcon } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { type LoginRequest, loginRequestSchema } from "~/api/auth";
+import {
+  type LoginRequest,
+  loginRequestSchema,
+  useLoginFullCredentialsMutation,
+} from "~/api/auth";
 import { Breadcrumb } from "~/components/breadcrumb";
 import { LookUpInput } from "~/components/lookup-input";
 import { Button } from "~/components/ui/button";
@@ -38,32 +42,36 @@ interface MaFile {
 }
 
 export const AuthSteamPage = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const loginMutation = useLoginFullCredentialsMutation();
   const {
     register,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<LoginRequest>({
     resolver: zodResolver(loginRequestSchema),
   });
 
-  const onSubmit = useCallback(async (_data: LoginRequest) => {
-    setIsLoading(true);
-    try {
-      // TODO call command
-      toast.success("Steam account added successfully!", {
-        dismissible: true,
-      });
-    } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to add account",
-        { dismissible: true },
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const onSubmit = useCallback(
+    async (data: LoginRequest) => {
+      loginMutation
+        .mutateAsync(data)
+        .then(() => {
+          toast.success("Steam account added successfully!", {
+            dismissible: true,
+          });
+          reset();
+        })
+        .catch((err: Error) => {
+          toast.error(
+            err instanceof Error ? err.message : "Failed to add account",
+            { dismissible: true },
+          );
+        });
+    },
+    [reset, loginMutation.mutateAsync],
+  );
 
   return (
     <form
@@ -153,8 +161,14 @@ export const AuthSteamPage = () => {
               </InputGroup>
               <FieldError>{errors.identitySecret?.message}</FieldError>
             </Field>
-            <Button disabled={isLoading} type="submit" className="w-full mt-4">
-              {isLoading ? "Adding Steam Account..." : "Add Steam Account"}
+            <Button
+              disabled={loginMutation.isPending}
+              type="submit"
+              className="w-full mt-4"
+            >
+              {loginMutation.isPending
+                ? "Adding Steam Account..."
+                : "Add Steam Account"}
             </Button>
           </FieldGroup>
         </FieldSet>
