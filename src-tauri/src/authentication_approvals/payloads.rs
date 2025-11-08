@@ -1,5 +1,6 @@
 use protobuf::Enum;
 use serde::{Deserialize, Serialize};
+use steamguard::ApproverError;
 use steamguard::protobufs::enums::ESessionPersistence;
 use steamguard::protobufs::steammessages_auth_steamclient::{
     CAuthentication_GetAuthSessionInfo_Response, EAuthSessionSecurityHistory,
@@ -56,6 +57,39 @@ impl AuthSessionResponse {
 pub enum GetApprovalsError {
     Unauthorized,
     Unknown,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AuthApproveRequest {
+    pub client_id: u64,
+    pub persistence: ESessionPersistence,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AuthDenyRequest {
+    pub client_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum AuthApprovalError {
+    Unknown,
+    Unauthorized,
+    Expired,
+    DuplicateRequest,
+}
+
+impl From<ApproverError> for AuthApprovalError {
+    fn from(err: ApproverError) -> Self {
+        match err {
+            ApproverError::DuplicateRequest => Self::DuplicateRequest,
+            ApproverError::Expired => Self::Expired,
+            ApproverError::Unauthorized => Self::Unauthorized,
+            _ => Self::Unknown,
+        }
+    }
 }
 
 #[derive(Debug, Deserialize)]

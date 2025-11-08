@@ -73,6 +73,8 @@ pub fn run() {
             account::commands::get_profile,
             authentication_approvals::commands::get_sessions,
             authentication_approvals::commands::approve_qr_login,
+            authentication_approvals::commands::approve_session,
+            authentication_approvals::commands::deny_session,
             confirmations::commands::get_confirmations,
         ])
         .run(tauri::generate_context!())

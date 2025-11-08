@@ -1,9 +1,13 @@
+use steamguard::approver::Challenge;
 use steamguard::protobufs::steammessages_auth_steamclient::CAuthentication_GetAuthSessionInfo_Response;
 use steamguard::token::Tokens;
 use steamguard::{ApproverError, LoginApprover, SteamGuardAccount};
 
 use super::payloads::{ApproveQrLoginRequest, AuthSessionResponse, GetApprovalsError};
 use crate::AppState;
+use crate::authentication_approvals::payloads::{
+    AuthApprovalError, AuthApproveRequest, AuthDenyRequest,
+};
 
 #[tauri::command]
 pub fn get_sessions(
@@ -50,6 +54,54 @@ pub fn get_sessions(
                 .map(|(client_id, response)| AuthSessionResponse::new(client_id, response))
                 .collect()
         })
+}
+
+#[tauri::command]
+pub fn approve_session(
+    state: tauri::State<'_, AppState>,
+    payload: AuthApproveRequest,
+) -> Result<(), AuthApprovalError> {
+    let active_account = state
+        .accounts_config
+        .lock()
+        .unwrap()
+        .get_active_account()
+        .ok_or(AuthApprovalError::Unauthorized)?
+        .clone();
+    let steam_guard_account: SteamGuardAccount = active_account.into();
+    let mut login_approver = LoginApprover::new(
+        state.transport.clone(),
+        steam_guard_account.tokens.as_ref().unwrap(),
+    );
+    login_approver
+        .approve(
+            &steam_guard_account,
+            Challenge::new(1, payload.client_id),
+            payload.persistence,
+        )
+        .map_err(AuthApprovalError::from)
+}
+
+#[tauri::command]
+pub fn deny_session(
+    state: tauri::State<'_, AppState>,
+    payload: AuthDenyRequest,
+) -> Result<(), AuthApprovalError> {
+    let active_account = state
+        .accounts_config
+        .lock()
+        .unwrap()
+        .get_active_account()
+        .ok_or(AuthApprovalError::Unauthorized)?
+        .clone();
+    let steam_guard_account: SteamGuardAccount = active_account.into();
+    let mut login_approver = LoginApprover::new(
+        state.transport.clone(),
+        steam_guard_account.tokens.as_ref().unwrap(),
+    );
+    login_approver
+        .deny(&steam_guard_account, Challenge::new(1, payload.client_id))
+        .map_err(AuthApprovalError::from)
 }
 
 #[tauri::command]
