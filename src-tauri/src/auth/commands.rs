@@ -21,18 +21,19 @@ pub fn login(app: AppHandle, payload: LoginRequest) -> Result<(), LoginError> {
         .expect("Expected access to config directory")
         .join("config.json");
     let transport = WebApiTransport::new(reqwest::blocking::Client::new());
+    let device_id = format!(
+        "{} (steam-desktop-authenticator-rs)",
+        gethostname::gethostname()
+            .into_string()
+            .expect("failed to get hostname")
+    );
     // see https://github.com/dyc3/steamguard-cli/blob/4a70af5bfd073604c2afe9f0eb2f0a0d0f4f5113/src/login.rs#L235
     let mut user_login = UserLogin::new(
         transport.clone(),
         DeviceDetails {
-            friendly_name: format!(
-                "{} (steam-desktop-authenticator-rs)",
-                gethostname::gethostname()
-                    .into_string()
-                    .expect("failed to get hostname")
-            ),
+            friendly_name: device_id.clone(),
             platform_type: EAuthTokenPlatformType::k_EAuthTokenPlatformType_MobileApp,
-            os_type: -500,
+            os_type: -500, // Android Unknown
             gaming_device_type: 528,
         },
     );
@@ -67,8 +68,14 @@ pub fn login(app: AppHandle, payload: LoginRequest) -> Result<(), LoginError> {
         account_password: payload.password,
         shared_secret: payload.shared_secret,
         identity_secret: payload.identity_secret,
-        refresh_token: tokens.refresh_token().expose_secret().to_string(),
         access_token: tokens.access_token().expose_secret().to_string(),
+        refresh_token: tokens.refresh_token().expose_secret().to_string(),
+        device_id: format!(
+            "{} (steam-desktop-authenticator-rs)",
+            gethostname::gethostname()
+                .into_string()
+                .expect("failed to get hostname")
+        ),
         steam_id: tokens
             .access_token()
             .decode()

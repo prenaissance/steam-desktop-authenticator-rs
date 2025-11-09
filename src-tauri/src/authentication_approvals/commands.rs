@@ -62,7 +62,6 @@ pub fn approve_session(
     state: tauri::State<'_, AppState>,
     payload: AuthApproveRequest,
 ) -> Result<(), AuthApprovalError> {
-    dbg!(&payload);
     let active_account = state
         .accounts_config
         .lock()
@@ -89,7 +88,6 @@ pub fn deny_session(
     state: tauri::State<'_, AppState>,
     payload: AuthDenyRequest,
 ) -> Result<(), AuthApprovalError> {
-    dbg!(&payload);
     let active_account = state
         .accounts_config
         .lock()
