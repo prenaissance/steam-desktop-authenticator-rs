@@ -5,7 +5,6 @@ import { SignInRequestList } from "./sign-in-request-list";
 
 export const SignInRequestContainer: FC = () => {
   const sessionsQuery = useSessions();
-  console.log(sessionsQuery.data);
   const [selected, setSelected] = useState<string | null>(null);
   const active = sessionsQuery.data?.find(
     (r) => r.clientId?.toString() === selected,

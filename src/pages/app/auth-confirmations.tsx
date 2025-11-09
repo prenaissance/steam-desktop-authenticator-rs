@@ -5,7 +5,6 @@ import { Button } from "~/components/ui/button";
 
 export const AuthConfirmationsPage = () => {
   const sessionsQuery = useSessions();
-  console.log(sessionsQuery.data);
   return (
     <div className="flex flex-col items-center w-full">
       <div className="w-full max-w-5xl">
