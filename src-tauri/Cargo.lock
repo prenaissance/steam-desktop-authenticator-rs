@@ -4558,6 +4558,7 @@ dependencies = [
  "reqwest",
  "serde",
  "serde_json",
+ "serde_with",
  "steamguard",
  "tauri",
  "tauri-build",

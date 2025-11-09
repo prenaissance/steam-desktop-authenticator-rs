@@ -1,5 +1,6 @@
 use protobuf::Enum;
 use serde::{Deserialize, Serialize};
+use serde_with::{serde_as, DisplayFromStr};
 use steamguard::ApproverError;
 use steamguard::protobufs::enums::ESessionPersistence;
 use steamguard::protobufs::steammessages_auth_steamclient::{
@@ -8,9 +9,11 @@ use steamguard::protobufs::steammessages_auth_steamclient::{
 };
 
 /// What even is required, steam?
+#[serde_as]
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AuthSessionResponse {
+    #[serde_as(as = "DisplayFromStr")]
     pub client_id: u64,
     pub ip: Option<String>,
     pub geoloc: Option<String>,
@@ -59,16 +62,20 @@ pub enum GetApprovalsError {
     Unknown,
 }
 
-#[derive(Debug, Deserialize)]
+#[serde_as]
+#[derive(Debug, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct AuthApproveRequest {
+    #[serde_as(as = "DisplayFromStr")]
     pub client_id: u64,
     pub persistence: ESessionPersistence,
 }
 
+#[serde_as]
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AuthDenyRequest {
+    #[serde_as(as = "DisplayFromStr")]
     pub client_id: u64,
 }
 
@@ -83,6 +90,7 @@ pub enum AuthApprovalError {
 
 impl From<ApproverError> for AuthApprovalError {
     fn from(err: ApproverError) -> Self {
+        log::debug!("Received authentication request approval error: {err:?}");
         match err {
             ApproverError::DuplicateRequest => Self::DuplicateRequest,
             ApproverError::Expired => Self::Expired,
@@ -97,4 +105,53 @@ impl From<ApproverError> for AuthApprovalError {
 pub struct ApproveQrLoginRequest {
     pub challenge_url: String,
     pub persistence: ESessionPersistence,
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::json;
+
+    use super::*;
+
+    #[test]
+    fn serializes_client_id_as_numeric_string() {
+        let response = AuthSessionResponse {
+            client_id: 9377380837889810614,
+            ip: Some("8.8.8.8".to_string()),
+            country: None,
+            city: None,
+            state: None,
+            geoloc: None,
+            device_friendly_name: Some("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36".to_string()),
+            high_usage_login: Some(false),
+            login_history: Some(EAuthSessionSecurityHistory::k_EAuthSessionSecurityHistory_Invalid),
+            platform_type: Some(EAuthTokenPlatformType::k_EAuthTokenPlatformType_WebBrowser),
+            requested_persistence: Some(ESessionPersistence::k_ESessionPersistence_Persistent),
+            requestor_location_mismatch: Some(false),
+            version: Some(1),
+            
+        };
+        let json =  serde_json::to_string_pretty(&response).expect("Could not serialize response");
+        let expected_fragment = "\"clientId\": \"9377380837889810614\"";
+
+        assert!(
+            json.contains(expected_fragment),
+            "JSON did not contain the expected fragment.\nExpected: {}\nActual JSON: {}", 
+            expected_fragment, 
+            json
+        );
+    }
+
+    #[test]
+    fn deserializes_client_id_from_numeric_string() {
+        let json = json!({
+            "clientId": "9377380837889810614",
+            "persistence": "k_ESessionPersistence_Persistent"
+        }).to_string();
+        let parsed = serde_json::from_str::<'_, AuthApproveRequest>(&json).expect("Could not parse auth approve request");
+        assert_eq!(parsed, AuthApproveRequest {
+            client_id: 9377380837889810614,
+            persistence: ESessionPersistence::k_ESessionPersistence_Persistent
+        });
+    }
 }
