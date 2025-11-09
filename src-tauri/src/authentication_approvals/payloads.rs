@@ -1,6 +1,6 @@
 use protobuf::Enum;
 use serde::{Deserialize, Serialize};
-use serde_with::{serde_as, DisplayFromStr};
+use serde_with::{DisplayFromStr, serde_as};
 use steamguard::ApproverError;
 use steamguard::protobufs::enums::ESessionPersistence;
 use steamguard::protobufs::steammessages_auth_steamclient::{
@@ -129,15 +129,14 @@ mod tests {
             requested_persistence: Some(ESessionPersistence::k_ESessionPersistence_Persistent),
             requestor_location_mismatch: Some(false),
             version: Some(1),
-            
         };
-        let json =  serde_json::to_string_pretty(&response).expect("Could not serialize response");
+        let json = serde_json::to_string_pretty(&response).expect("Could not serialize response");
         let expected_fragment = "\"clientId\": \"9377380837889810614\"";
 
         assert!(
             json.contains(expected_fragment),
-            "JSON did not contain the expected fragment.\nExpected: {}\nActual JSON: {}", 
-            expected_fragment, 
+            "JSON did not contain the expected fragment.\nExpected: {}\nActual JSON: {}",
+            expected_fragment,
             json
         );
     }
@@ -147,11 +146,16 @@ mod tests {
         let json = json!({
             "clientId": "9377380837889810614",
             "persistence": "k_ESessionPersistence_Persistent"
-        }).to_string();
-        let parsed = serde_json::from_str::<'_, AuthApproveRequest>(&json).expect("Could not parse auth approve request");
-        assert_eq!(parsed, AuthApproveRequest {
-            client_id: 9377380837889810614,
-            persistence: ESessionPersistence::k_ESessionPersistence_Persistent
-        });
+        })
+        .to_string();
+        let parsed = serde_json::from_str::<'_, AuthApproveRequest>(&json)
+            .expect("Could not parse auth approve request");
+        assert_eq!(
+            parsed,
+            AuthApproveRequest {
+                client_id: 9377380837889810614,
+                persistence: ESessionPersistence::k_ESessionPersistence_Persistent
+            }
+        );
     }
 }

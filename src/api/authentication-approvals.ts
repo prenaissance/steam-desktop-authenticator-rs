@@ -25,7 +25,7 @@ export enum ESessionPersistence {
 
 export type AuthSessionResponse = {
   /** format: u64 */
-  clientId: number;
+  clientId: string;
   ip?: string | null;
   geoloc?: string | null;
   city?: string | null;
@@ -58,13 +58,13 @@ export const useSessions = () =>
 
 export type AuthApproveRequest = {
   /** format: u64 */
-  clientId: number;
+  clientId: string;
   persistence: ESessionPersistence;
 };
 
 export type AuthDenyRequest = {
   /** format: u64 */
-  clientId: number;
+  clientId: string;
 };
 
 export enum AuthApprovalError {
@@ -102,9 +102,7 @@ export const useApproveSession = (
 
 export const denySession = async (payload: AuthDenyRequest): Promise<void> =>
   invoke<void>("deny_session", {
-    payload: {
-      client_id: payload.clientId,
-    },
+    payload,
   });
 
 export const useDenySession = (
