@@ -23,14 +23,18 @@ const handleClose = async () => {
 
 export const TitleBar = () => {
   return (
-    <nav
-      onMouseDown={startDrag}
-      className="sticky w-full top-0 left-0 right-0 h-9 flex items-center justify-end gap-2 pt-1 px-2 bg-background z-40"
-    >
+    <nav className="sticky w-full top-0 left-0 right-0 h-9 flex items-center justify-end gap-2 pt-1 px-2 bg-background z-30">
+      <div
+        role="menubar"
+        className="absolute top-0 left-0 w-full h-9 z-30"
+        onMouseDown={startDrag}
+        aria-label="Drag Area"
+      />
+
       <Button
         variant="ghost"
         size="icon"
-        className="h-7 w-7 rounded-md hover:bg-muted"
+        className="h-7 w-7 rounded-md hover:bg-muted z-40"
         onClick={handleMinimize}
       >
         <Minus className="h-4 w-4" />
@@ -38,7 +42,7 @@ export const TitleBar = () => {
       <Button
         variant="ghost"
         size="icon"
-        className="h-7 w-7 rounded-md hover:bg-destructive hover:text-destructive-foreground"
+        className="h-7 w-7 rounded-md hover:bg-destructive hover:text-destructive-foreground z-40"
         onClick={handleClose}
       >
         <X className="h-4 w-4" />
