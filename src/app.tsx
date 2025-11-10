@@ -5,6 +5,7 @@ import { Toaster } from "./components/ui/sonner";
 import { Layout } from "./layout";
 import { ConfirmationsPage } from "./pages/app/confirmations";
 import { SingInRequestsPage } from "./pages/app/sign-in-requests";
+import { ActionSignInRequestPage } from "./pages/app/sign-in-requests/action-sign-in-request";
 import { TotpPage } from "./pages/app/totp";
 import { AuthSteamPage } from "./pages/auth/steam";
 import { WelcomePage } from "./pages/welcome";
@@ -30,6 +31,7 @@ export const App = () => (
             <Route path="/confirmations" element={<ConfirmationsPage />} />
             <Route path="/sign-in-requests">
               <Route index element={<SingInRequestsPage />} />
+              <Route path=":clientId" element={<ActionSignInRequestPage />} />
             </Route>
           </Route>
         </Routes>

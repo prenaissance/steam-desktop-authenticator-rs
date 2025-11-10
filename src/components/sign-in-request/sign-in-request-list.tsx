@@ -1,6 +1,6 @@
 import { AvatarFallback } from "@radix-ui/react-avatar";
 import { Clock, MapPin, Zap } from "lucide-react";
-import type { FC } from "react";
+import { useNavigate } from "react-router";
 import { useActiveAccount } from "~/api/account";
 import {
   type AuthSessionResponse,
@@ -9,11 +9,8 @@ import {
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
 
-interface SignInRequestListProps {
-  onSelect: (requestId: string) => void;
-}
-
-export const SignInRequestList: FC<SignInRequestListProps> = ({ onSelect }) => {
+export const SignInRequestList = () => {
+  const navigate = useNavigate();
   const sessionsQuery = useSessions();
   const account = useActiveAccount();
   const sessions = sessionsQuery.data || [];
@@ -26,16 +23,16 @@ export const SignInRequestList: FC<SignInRequestListProps> = ({ onSelect }) => {
             <button
               key={session.clientId}
               type="button"
-              onClick={() => onSelect(session?.clientId.toString() || "")}
+              onClick={() => navigate(`/sign-in-requests/${session.clientId}`)}
               className="w-full group relative overflow-hidden rounded-2xl bg-card border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute inset-0 bg-linear-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity" />
 
               <div className="relative p-4 flex items-center justify-between">
                 <div className="flex items-center gap-4 flex-1 min-w-0">
-                  <Avatar className="h-12 w-12 ring-2 ring-border flex-shrink-0">
+                  <Avatar className="h-12 w-12 ring-2 ring-border shrink-0">
                     <AvatarImage src="/placeholder.svg" />
-                    <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white font-semibold">
+                    <AvatarFallback className="bg-linear-to-br from-primary to-accent text-white font-semibold">
                       {account.data?.username.toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
@@ -45,7 +42,7 @@ export const SignInRequestList: FC<SignInRequestListProps> = ({ onSelect }) => {
                       <h3 className="text-sm font-semibold text-foreground truncate">
                         {account.data?.username}
                       </h3>
-                      <Zap className="w-3.5 h-3.5 text-accent flex-shrink-0" />
+                      <Zap className="w-3.5 h-3.5 text-accent shrink-0" />
                     </div>
 
                     <div className="flex items-center gap-2 flex-wrap mb-2">
@@ -55,7 +52,7 @@ export const SignInRequestList: FC<SignInRequestListProps> = ({ onSelect }) => {
                       </div>
                       <Badge
                         variant="secondary"
-                        className="font-mono text-xs flex-shrink-0"
+                        className="font-mono text-xs shrink-0"
                       >
                         {session.ip}
                       </Badge>
@@ -68,7 +65,7 @@ export const SignInRequestList: FC<SignInRequestListProps> = ({ onSelect }) => {
                   </div>
                 </div>
 
-                <div className="ml-3 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="ml-3 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
                   <svg
                     role="img"
                     aria-label="img"

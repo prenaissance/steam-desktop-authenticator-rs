@@ -103,7 +103,7 @@
   --popover-foreground: hsl(210 40% 98%);
   --primary: hsl(217 91% 60%);
   --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(222 47% 15%);
+  --secondary: hsl(190 60% 30%); /* New: Tealish blue, more distinct */
   --secondary-foreground: hsl(210 40% 98%);
   --muted: hsl(222 47% 15%);
   --muted-foreground: hsl(210, 11%, 89%);

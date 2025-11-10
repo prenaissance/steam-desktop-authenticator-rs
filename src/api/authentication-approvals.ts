@@ -32,6 +32,7 @@ export type AuthSessionResponse = {
   state?: string | null;
   country?: string | null;
   platformType?: EAuthTokenPlatformType | null;
+  deviceUserAgent?: string | null;
   deviceFriendlyName?: string | null;
   version?: number | null;
   loginHistory?: EAuthSessionSecurityHistory | null;
@@ -78,7 +79,7 @@ export const approveSession = async (
   payload: AuthApproveRequest,
 ): Promise<void> =>
   invoke<void>("approve_session", {
-    payload: payload,
+    payload,
   });
 
 export const useApproveSession = (

@@ -58,7 +58,7 @@ export const Breadcrumb = () => {
         Home
       </Link>
 
-      {pathSegments.map((segment, index) => (
+      {pathSegments.slice(0, 1).map((segment, index) => (
         <div key={segment} className="flex items-center gap-2">
           <ChevronRight className="h-4 w-4 text-muted-foreground" />
           {index === pathSegments.length - 1 ? (
