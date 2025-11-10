@@ -6,8 +6,8 @@ import {
   type AuthSessionResponse,
   useSessions,
 } from "~/api/authentication-approvals";
-import { Avatar, AvatarImage } from "./ui/avatar";
-import { Badge } from "./ui/badge";
+import { Avatar, AvatarImage } from "../ui/avatar";
+import { Badge } from "../ui/badge";
 
 interface SignInRequestListProps {
   onSelect: (requestId: string) => void;

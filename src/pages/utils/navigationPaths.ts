@@ -14,7 +14,7 @@ export const getNavigationItems = (isLocked?: boolean) => [
   },
   {
     icon: ShieldCheck,
-    label: "Auth sessions",
-    path: "/auth-sessions",
+    label: "Sign-in requests",
+    path: "/sign-in-requests",
   },
 ];
