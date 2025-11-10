@@ -12,8 +12,8 @@ import {
   useApproveSession,
   useDenySession,
 } from "~/api/authentication-approvals";
-import { Button } from "./ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { Button } from "../ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 const defaultIcon = L.icon({
   iconUrl: markerIcon,

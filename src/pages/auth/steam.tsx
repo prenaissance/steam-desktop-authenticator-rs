@@ -8,7 +8,6 @@ import {
   loginRequestSchema,
   useLoginFullCredentialsMutation,
 } from "~/api/auth";
-import { Breadcrumb } from "~/components/breadcrumb";
 import { LookUpInput } from "~/components/lookup-input";
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
@@ -78,8 +77,6 @@ export const AuthSteamPage = () => {
       className="flex flex-col items-center justify-center w-full"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <Breadcrumb />
-
       <div className="w-full max-w-md">
         <FieldSet className="w-full">
           <FieldLegend className="font-bold">Steam Authentication</FieldLegend>

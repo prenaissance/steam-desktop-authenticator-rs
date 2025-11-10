@@ -38,14 +38,18 @@ export const Breadcrumb = () => {
       label: "Add account",
     },
     {
-      path: "/auth-sessions",
-      label: "Auth sessions",
+      path: "/sign-in-requests",
+      label: "Sign-in requests",
       locked: !userData,
     },
   ];
 
+  if (pathSegments.length === 0) {
+    return null;
+  }
+
   return (
-    <div className="flex items-center gap-2 mb-6">
+    <div className="w-full flex items-center justify-center gap-2 mb-6 mt-1">
       <Link
         to="/"
         className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"

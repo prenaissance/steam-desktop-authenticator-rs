@@ -28,7 +28,7 @@ export const WelcomePage = () => {
 
   return (
     <motion.div
-      className="h-full flex flex-col gap-6 p-6 max-w-6xl mx-auto"
+      className="h-full flex flex-col gap-4 px-2 max-w-6xl mx-auto"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
