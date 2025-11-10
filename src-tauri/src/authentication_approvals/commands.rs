@@ -25,6 +25,11 @@ pub fn get_sessions(
     let approvals: Result<Vec<(u64, CAuthentication_GetAuthSessionInfo_Response)>, _> =
         login_approver
             .list_auth_sessions()
+            .inspect(|client_ids| {
+                log::debug!(
+                    "Loaded session ids: {client_ids:?}. Hydrating detailed information...",
+                );
+            })
             .map_err(|err| match err {
                 ApproverError::Unauthorized => GetApprovalsError::Unauthorized,
                 _ => GetApprovalsError::Unknown,
@@ -46,10 +51,6 @@ pub fn get_sessions(
             }
         })
         .map(|vec| {
-            log::trace!(
-                "Loaded {} approval ids. Hydrating detailed information...",
-                vec.len()
-            );
             vec.into_iter()
                 .map(|(client_id, response)| AuthSessionResponse::new(client_id, response))
                 .collect()
@@ -101,6 +102,9 @@ pub fn deny_session(
     );
     login_approver
         .deny(&steam_guard_account, Challenge::new(1, payload.client_id))
+        .inspect_err(|err| {
+            log::debug!("Received error while trying to deny session: {err:?}");
+        })
         .map_err(AuthApprovalError::from)
 }
 

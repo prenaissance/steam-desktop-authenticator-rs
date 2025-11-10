@@ -60,8 +60,7 @@ impl From<PlayerLinkDetails> for ProfileResponse {
 }
 
 impl From<TransportError> for GetProfileError {
-    fn from(value: TransportError) -> Self {
-        dbg!(value);
+    fn from(_: TransportError) -> Self {
         GetProfileError::NetworkError
     }
 }

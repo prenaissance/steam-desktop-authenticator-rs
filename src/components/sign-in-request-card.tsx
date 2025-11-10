@@ -48,8 +48,10 @@ export const SignInRequestCard: FC<SignInRequestCardProps> = ({
       await denyMutation.mutateAsync({ clientId: request.clientId });
       toast.success("Sign-in request denied", { dismissible: true });
       onClose();
-    } catch {
-      toast.error("Failed to deny sign-in request", { dismissible: true });
+    } catch (error) {
+      toast.error(`Failed to deny sign-in request: ${error}`, {
+        dismissible: true,
+      });
     }
   };
 
