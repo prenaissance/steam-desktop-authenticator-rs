@@ -47,8 +47,7 @@ impl AuthSessionResponse {
             device_user_agent: response.device_friendly_name.clone(),
             device_friendly_name: response
                 .device_friendly_name
-                .as_ref()
-                .map(|x| x.as_str())
+                .as_deref()
                 .map(format_user_agent),
             version: response.version,
             login_history: response
