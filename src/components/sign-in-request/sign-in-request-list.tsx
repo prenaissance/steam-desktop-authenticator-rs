@@ -8,14 +8,14 @@ export const SignInRequestList = () => {
 
   if (sessionsQuery && !sessions.length) {
     return (
-      <div className="text-center py-12 grow ">
+      <div className="grow py-12 text-center">
         <p className="text-muted-foreground text-sm">No pending requests</p>
       </div>
     );
   }
 
   return (
-    <ul className="grow w-full space-y-3 px-2">
+    <ul className="w-full grow space-y-3 px-2">
       {sessions.map((session) => (
         <SignInRequestListItem key={session.clientId} session={session} />
       ))}

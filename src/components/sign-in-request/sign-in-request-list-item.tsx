@@ -22,27 +22,27 @@ export const SignInRequestListItem = ({
       <Link
         key={session.clientId}
         to={`/sign-in-requests/${session.clientId}`}
-        className="w-full flex justify-between gap-2 group relative overflow-hidden rounded-xs bg-card border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg"
+        className="group relative flex w-full justify-between gap-2 overflow-hidden rounded-xs border border-border bg-card transition-all duration-300 hover:border-primary/50 hover:shadow-lg"
       >
         <Avatar className="h-12 w-12 rounded-none">
           <AvatarImage src={accountQuery.data?.avatarUrl} />
-          <AvatarFallback className=" rounded-none bg-linear-to-br from-primary to-accent text-white font-semibold">
+          <AvatarFallback className="rounded-none bg-linear-to-br from-primary to-accent font-semibold text-white">
             <img alt="avatar" src="/default_steam_avatar.jpg"></img>
           </AvatarFallback>
         </Avatar>
 
-        <div className="flex flex-col justify-around grow min-w-0 text-left">
-          <header className="ml-0.5 text-sm font-bold text-foreground truncate">
+        <div className="flex min-w-0 grow flex-col justify-around text-left">
+          <header className="ml-0.5 truncate font-bold text-foreground text-sm">
             {accountQuery.data?.username}
           </header>
 
-          <p className="text-md align-bottom text-muted-foreground">
-            <MapPin className="size-4 inline mr-0.5 -ml-0.5 mb-1" />
+          <p className="align-bottom text-md text-muted-foreground">
+            <MapPin className="-ml-0.5 mr-0.5 mb-1 inline size-4" />
             <span className="inline-block">{` ${session.city}, ${session.country}`}</span>
           </p>
         </div>
 
-        <ChevronRight className="ml-3 mr-1 size-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity self-center" />
+        <ChevronRight className="mr-1 ml-3 size-4 self-center text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
       </Link>
     </li>
   );

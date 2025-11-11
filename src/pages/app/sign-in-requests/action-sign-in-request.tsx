@@ -89,7 +89,7 @@ export const ActionSignInRequestPage = () => {
           size="icon"
           onClick={handleClose}
         >
-          <X className="w-5 h-5" />
+          <X className="h-5 w-5" />
         </Button>
         <h2 className="text-foreground text-lg">New Sign-In Request for</h2>
         <p className="font-bold text-foreground text-xl">
@@ -103,7 +103,7 @@ export const ActionSignInRequestPage = () => {
         </p>
       </SignInRequestSection>
 
-      <SignInRequestSection className="flex items-center gap-2 p-2 text-left ">
+      <SignInRequestSection className="flex items-center gap-2 p-2 text-left">
         <Checkbox
           className="size-6 rounded-xs"
           id="remember-device-checkbox"
@@ -112,20 +112,20 @@ export const ActionSignInRequestPage = () => {
         />
         <label
           htmlFor="remember-device-checkbox"
-          className="text-sm text-muted-foreground"
+          className="text-muted-foreground text-sm"
         >
           Remember my password on this device
         </label>
       </SignInRequestSection>
 
-      <section className="flex justify-stretch gap-2 mt-1">
+      <section className="mt-1 flex justify-stretch gap-2">
         <Button
           onClick={handleApproveSession}
           disabled={approveMutation.isPending || denyMutation.isPending}
-          variant={"default"}
+          variant="default"
           className="grow"
         >
-          <Check className="w-4 h-4" />
+          <Check className="h-4 w-4" />
           Approve
         </Button>
 
@@ -135,7 +135,7 @@ export const ActionSignInRequestPage = () => {
           disabled={approveMutation.isPending || denyMutation.isPending}
           className="grow"
         >
-          <X className="w-4 h-4" />
+          <X className="h-4 w-4" />
           Deny
         </Button>
       </section>

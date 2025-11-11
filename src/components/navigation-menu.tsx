@@ -22,19 +22,19 @@ type NavigationMenuProps = {
 
 export const NavigationMenu = ({ items }: NavigationMenuProps) => {
   return (
-    <div className="flex gap-3 w-full flex-wrap">
+    <div className="flex w-full flex-wrap gap-3">
       {items.map((item) => {
         const ButtonContent = (
           <Button
             variant="outline"
-            className={`w-full cursor-pointer select-none flex-1 h-16 rounded-2xl border-border/50 bg-secondary/30 hover:bg-secondary hover:border-primary/50 transition-all duration-300 flex items-center justify-center gap-3 group ${
+            className={`group flex h-16 w-full flex-1 cursor-pointer select-none items-center justify-center gap-3 rounded-2xl border-border/50 bg-secondary/30 transition-all duration-300 hover:border-primary/50 hover:bg-secondary ${
               item.locked
                 ? "cursor-not-allowed text-gray-400 dark:text-gray-600"
                 : ""
             }`}
             onClick={item.locked ? undefined : item.onClick}
           >
-            <div className="p-2 rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors">
+            <div className="rounded-xl bg-primary/10 p-2 transition-colors group-hover:bg-primary/20">
               <item.icon className="h-5 w-5 text-primary" />
             </div>
             <span className="font-medium">{item.label}</span>

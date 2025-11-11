@@ -5,7 +5,7 @@ import { Button } from "~/components/ui/button";
 export const SingInRequestsPage = () => {
   const sessionsQuery = useSessions();
   return (
-    <div className="flex flex-col items-center w-full h-full">
+    <div className="flex h-full w-full flex-col items-center">
       <SignInRequestList />
       <Button
         className="mb-6"

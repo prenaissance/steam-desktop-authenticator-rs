@@ -74,7 +74,7 @@ export const AuthSteamPage = () => {
 
   return (
     <form
-      className="flex flex-col items-center justify-center w-full"
+      className="flex w-full flex-col items-center justify-center"
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="w-full max-w-md">
@@ -161,7 +161,7 @@ export const AuthSteamPage = () => {
             <Button
               disabled={loginMutation.isPending}
               type="submit"
-              className="w-full mt-4"
+              className="mt-4 w-full"
             >
               {loginMutation.isPending
                 ? "Adding Steam Account..."
@@ -171,8 +171,8 @@ export const AuthSteamPage = () => {
         </FieldSet>
 
         <Separator className="my-6" />
-        <Card className="p-4 w-full">
-          <h3 className="text-lg font-medium mb-4">Import from .maFile</h3>
+        <Card className="w-full p-4">
+          <h3 className="mb-4 font-medium text-lg">Import from .maFile</h3>
           <Dropzone
             maxFiles={1}
             accept={{
@@ -218,8 +218,8 @@ export const AuthSteamPage = () => {
             }}
           >
             <div className="flex flex-col items-center justify-center py-4">
-              <p className="text-sm font-medium">Upload .maFile</p>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="font-medium text-sm">Upload .maFile</p>
+              <p className="mt-1 text-muted-foreground text-xs">
                 Click to upload your Steam Desktop Authenticator .maFile
               </p>
             </div>

@@ -19,8 +19,8 @@ const Totp = ({ isLoading, data, error }: TotpProps) => {
   if (error) {
     return (
       <div className="flex flex-col items-center text-destructive">
-        <AlertTriangle className="w-8 h-8" />
-        <span className="text-xs font-medium">Error</span>
+        <AlertTriangle className="h-8 w-8" />
+        <span className="font-medium text-xs">Error</span>
       </div>
     );
   }
@@ -37,30 +37,28 @@ const Totp = ({ isLoading, data, error }: TotpProps) => {
   };
 
   return (
-    <div className="flex justify-center w-full">
+    <div className="flex w-full justify-center">
       {/* Wrap the code in a relative container sized to content */}
       <button
         type="button"
         onClick={handleCopy}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className="relative flex items-center cursor-pointer select-none"
+        className="relative flex cursor-pointer select-none items-center"
       >
-        <span className="text-2xl font-bold tracking-widest text-foreground">
+        <span className="font-bold text-2xl text-foreground tracking-widest">
           {code}
         </span>
 
         <div
-          className={`absolute flex items-center gap-2 ml-2 top-1/2 left-full transform -translate-y-1/2
-          transition-all duration-200 ease-out
-          ${
+          className={`-translate-y-1/2 absolute top-1/2 left-full ml-2 flex transform items-center gap-2 transition-all duration-200 ease-out ${
             hovered
-              ? "opacity-100 translate-x-0"
-              : "opacity-0 translate-x-4 pointer-events-none"
+              ? "translate-x-0 opacity-100"
+              : "pointer-events-none translate-x-4 opacity-0"
           }`}
         >
-          <Copy className="w-5 h-5 text-white-400" />
-          <span className="text-sm text-muted-foreground">Copy</span>
+          <Copy className="h-5 w-5 text-white-400" />
+          <span className="text-muted-foreground text-sm">Copy</span>
         </div>
       </button>
     </div>
@@ -112,11 +110,11 @@ export const TotpDisplay = () => {
 
   return (
     <Card className="w-full bg-card">
-      <CardContent className="w-full flex flex-col items-center justify-center space-y-4">
+      <CardContent className="flex w-full flex-col items-center justify-center space-y-4">
         <Totp isLoading={isLoading} data={data ?? null} error={error} />
-        <div className="w-full h-3 bg-muted rounded-full overflow-hidden relative">
+        <div className="relative h-3 w-full overflow-hidden rounded-full bg-muted">
           <div
-            className="h-full rounded-full animate-[snake_1s_linear_infinite]"
+            className="h-full animate-[snake_1s_linear_infinite] rounded-full"
             style={{
               width: `${progress}%`,
               background:
@@ -125,7 +123,7 @@ export const TotpDisplay = () => {
             }}
           />
         </div>
-        <p className="text-sm text-white w-full text-center">
+        <p className="w-full text-center text-sm text-white">
           {isLoading && !data
             ? "Initializing timer..."
             : `Code expires in ${remainingSeconds}s`}

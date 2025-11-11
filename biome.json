@@ -23,7 +23,11 @@
           "options": {
             "syntax": "shorthand"
           }
-        }
+        },
+        "useConsistentCurlyBraces": "error"
+      },
+      "nursery": {
+        "useSortedClasses": "warn"
       }
     }
   },
