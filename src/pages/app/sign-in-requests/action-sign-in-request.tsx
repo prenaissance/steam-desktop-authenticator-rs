@@ -10,12 +10,12 @@ import {
   useSessions,
 } from "~/api/authentication-approvals";
 import { MapTile } from "~/components/sign-in-request/map-tile";
+import { SignInRequestSection } from "~/components/sign-in-request/sing-in-request-section";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 
 export const ActionSignInRequestPage = () => {
   const profileQuery = useProfile();
-  console.log(profileQuery.data);
   const params = useParams();
   const clientId = params.clientId!;
   const navigate = useNavigate();
@@ -82,7 +82,7 @@ export const ActionSignInRequestPage = () => {
   return (
     <div className="flex w-full max-w-2xl flex-col gap-1 text-center">
       <MapTile latitude={latitude} longitude={longitude} className="w-full" />
-      <div className="relative border-border border-b bg-linear-to-r from-primary/10 via-accent/5 to-primary/10 px-6 py-5 text-sm">
+      <SignInRequestSection className="relative px-6 py-5 text-sm">
         <Button
           className="absolute top-1 right-1"
           variant="ghost-destructive"
@@ -101,9 +101,9 @@ export const ActionSignInRequestPage = () => {
         <p>
           {session.city}, {session.country}
         </p>
-      </div>
+      </SignInRequestSection>
 
-      <div className="flex items-center gap-2 overflow-y-auto p-3 bg-linear-to-r from-primary/10 via-accent/5 to-primary/10 text-left ">
+      <SignInRequestSection className="flex items-center gap-2 p-2 text-left ">
         <Checkbox
           className="size-6 rounded-xs"
           id="remember-device-checkbox"
@@ -116,28 +116,29 @@ export const ActionSignInRequestPage = () => {
         >
           Remember my password on this device
         </label>
-      </div>
+      </SignInRequestSection>
 
-      <div className="flex justify-between gap-3 border-t border-border px-6 py-4 bg-linear-to-r from-primary/10 via-accent/5 to-primary/10">
-        <Button
-          variant="outline"
-          onClick={handleDenySession}
-          disabled={approveMutation.isPending || denyMutation.isPending}
-          className="rounded-xl text-destructive border-destructive/40"
-        >
-          <X className="w-4 h-4" />
-          Deny
-        </Button>
-
+      <section className="flex justify-stretch gap-2 mt-1">
         <Button
           onClick={handleApproveSession}
           disabled={approveMutation.isPending || denyMutation.isPending}
-          className="rounded-xl bg-primary hover:bg-primary/90"
+          variant={"default"}
+          className="grow"
         >
           <Check className="w-4 h-4" />
           Approve
         </Button>
-      </div>
+
+        <Button
+          variant="ghost-destructive"
+          onClick={handleDenySession}
+          disabled={approveMutation.isPending || denyMutation.isPending}
+          className="grow"
+        >
+          <X className="w-4 h-4" />
+          Deny
+        </Button>
+      </section>
     </div>
   );
 };
