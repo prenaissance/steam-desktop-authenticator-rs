@@ -8,6 +8,8 @@ use steamguard::protobufs::steammessages_auth_steamclient::{
     EAuthTokenPlatformType,
 };
 
+use crate::authentication_approvals::format_user_agent::format_user_agent;
+
 /// What even is required, steam?
 #[serde_as]
 #[derive(Debug, Serialize)]
@@ -21,6 +23,7 @@ pub struct AuthSessionResponse {
     pub state: Option<String>,
     pub country: Option<String>,
     pub platform_type: Option<EAuthTokenPlatformType>,
+    pub device_user_agent: Option<String>,
     pub device_friendly_name: Option<String>,
     pub version: Option<i32>,
     pub login_history: Option<EAuthSessionSecurityHistory>,
@@ -41,7 +44,11 @@ impl AuthSessionResponse {
             platform_type: response
                 .platform_type
                 .and_then(|x| EAuthTokenPlatformType::from_i32(x.value())),
-            device_friendly_name: response.device_friendly_name.clone(),
+            device_user_agent: response.device_friendly_name.clone(),
+            device_friendly_name: response
+                .device_friendly_name
+                .as_deref()
+                .map(format_user_agent),
             version: response.version,
             login_history: response
                 .login_history
@@ -115,6 +122,7 @@ mod tests {
 
     #[test]
     fn serializes_client_id_as_numeric_string() {
+        let user_agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36";
         let response = AuthSessionResponse {
             client_id: 9377380837889810614,
             ip: Some("8.8.8.8".to_string()),
@@ -122,7 +130,8 @@ mod tests {
             city: None,
             state: None,
             geoloc: None,
-            device_friendly_name: Some("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36".to_string()),
+            device_user_agent: Some(user_agent.to_string()),
+            device_friendly_name: Some(format_user_agent(user_agent)),
             high_usage_login: Some(false),
             login_history: Some(EAuthSessionSecurityHistory::k_EAuthSessionSecurityHistory_Invalid),
             platform_type: Some(EAuthTokenPlatformType::k_EAuthTokenPlatformType_WebBrowser),
