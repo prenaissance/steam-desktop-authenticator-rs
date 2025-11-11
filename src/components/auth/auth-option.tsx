@@ -22,16 +22,16 @@ export const AuthOption: FC<AuthOptionProps> = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+      <Card className="cursor-pointer transition-shadow hover:shadow-lg">
         <Button variant="outline" asChild>
           <a
             href={link}
-            className="flex items-center gap-4 w-full text-left p-4"
+            className="flex w-full items-center gap-4 p-4 text-left"
           >
             {icon}
             <div>
-              <h3 className="text-lg font-semibold">{label}</h3>
-              <p className="text-sm text-muted-foreground">{description}</p>
+              <h3 className="font-semibold text-lg">{label}</h3>
+              <p className="text-muted-foreground text-sm">{description}</p>
             </div>
           </a>
         </Button>

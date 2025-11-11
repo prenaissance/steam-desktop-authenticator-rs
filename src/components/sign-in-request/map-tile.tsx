@@ -65,25 +65,25 @@ export const MapTile = ({
   return (
     <div
       className={cn(
-        "w-64 h-32 overflow-hidden border border-border shadow-sm relative flex flex-row",
+        "relative flex h-32 w-64 flex-row overflow-hidden border border-border shadow-sm",
         className,
       )}
     >
       <img
         src={tileUrl1}
         alt={`Map tile 1`}
-        className="w-1/2 h-full object-cover"
+        className="h-full w-1/2 object-cover"
       />
       <img
         src={tileUrl2}
         alt={`Map tile 2`}
-        className="w-1/2 h-full object-cover"
+        className="h-full w-1/2 object-cover"
       />
 
       <MapPin
         className={cn(
-          "absolute w-5 h-5 text-accent drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]",
-          "translate-x-[-50%] -translate-y-full",
+          "absolute h-5 w-5 text-accent drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]",
+          "-translate-y-full translate-x-[-50%]",
         )}
         style={{
           top: `${markerTopPercent}%`,

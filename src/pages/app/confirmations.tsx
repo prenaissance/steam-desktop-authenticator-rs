@@ -25,13 +25,13 @@ export const ConfirmationsPage = () => {
   console.log(data);
 
   return (
-    <div className="flex flex-col items-center w-full">
+    <div className="flex w-full flex-col items-center">
       <div className="flex flex-col items-center justify-center p-10">
-        <h1 className="text-2xl font-bold">Confirmations Page</h1>
+        <h1 className="font-bold text-2xl">Confirmations Page</h1>
         <Button
           type="button"
           onClick={handleClick}
-          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+          className="mt-4 rounded bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
         >
           Load Confirmations
         </Button>

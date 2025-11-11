@@ -14,8 +14,8 @@ export const WelcomePage = () => {
 
   if (logStatusFetching) {
     return (
-      <div className="flex justify-center items-center h-full">
-        <Spinner className="w-10 h-10" />
+      <div className="flex h-full items-center justify-center">
+        <Spinner className="h-10 w-10" />
       </div>
     );
   }
@@ -28,18 +28,18 @@ export const WelcomePage = () => {
 
   return (
     <motion.div
-      className="h-full flex flex-col gap-4 px-2 max-w-6xl mx-auto"
+      className="mx-auto flex h-full max-w-6xl flex-col gap-4 px-2"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <header className="flex justify-between items-center relative z-10">
+      <header className="relative z-10 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-3 rounded-2xl bg-linear-to-br from-primary to-accent shadow-lg shadow-primary/30">
+          <div className="rounded-2xl bg-linear-to-br from-primary to-accent p-3 shadow-lg shadow-primary/30">
             <Shield className="h-7 w-7 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+            <h1 className="bg-linear-to-r from-foreground to-foreground/70 bg-clip-text font-bold text-3xl text-transparent">
               Steam Guard
             </h1>
             <p className="text-muted-foreground text-sm">
@@ -50,26 +50,26 @@ export const WelcomePage = () => {
       </header>
 
       <Card className="p-4">
-        <h2 className="text-muted-foreground font-semibold mb-3">
+        <h2 className="mb-3 font-semibold text-muted-foreground">
           Active Account
         </h2>
         <AccountSelector />
       </Card>
       {userData && (
-        <div className="w-full flex flex-col items-center justify-center">
+        <div className="flex w-full flex-col items-center justify-center">
           <TotpDisplay />
         </div>
       )}
       <NavigationMenu items={getNavigationItems(!userData)} />
       <div className="mt-auto pt-8">
         <Card
-          className="p-6 bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+          className="cursor-pointer bg-gray-50 p-6 transition-colors hover:bg-gray-100 dark:bg-gray-900 dark:hover:bg-gray-800"
           onClick={handleDocsClick}
         >
           <div className="flex items-center justify-between">
             <div>
               <h3 className="font-medium">Need Help?</h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Check out our documentation for guidance
               </p>
             </div>

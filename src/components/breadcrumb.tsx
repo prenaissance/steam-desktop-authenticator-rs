@@ -49,10 +49,10 @@ export const Breadcrumb = () => {
   }
 
   return (
-    <div className="w-full flex items-center justify-center gap-2 mb-6 mt-1">
+    <div className="mt-1 mb-6 flex w-full items-center justify-center gap-2">
       <Link
         to="/"
-        className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        className="flex items-center gap-1 text-muted-foreground text-sm transition-colors hover:text-foreground"
       >
         <Home className="h-4 w-4" />
         Home
@@ -75,13 +75,13 @@ export const Breadcrumb = () => {
                       <DropdownMenuItem
                         key={path.path}
                         className={
-                          path.locked ? "opacity-50 cursor-not-allowed" : ""
+                          path.locked ? "cursor-not-allowed opacity-50" : ""
                         }
                         disabled={path.locked}
                       >
-                        <div className="flex items-center justify-between w-full text-sm">
+                        <div className="flex w-full items-center justify-between text-sm">
                           {path.label}
-                          {path.locked && <Lock className="h-4 w-4 ml-2" />}
+                          {path.locked && <Lock className="ml-2 h-4 w-4" />}
                         </div>
                       </DropdownMenuItem>
                     );
@@ -108,7 +108,7 @@ export const Breadcrumb = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <span className="text-sm text-muted-foreground">
+            <span className="text-muted-foreground text-sm">
               {pathMap[segment] || segment}
             </span>
           )}
