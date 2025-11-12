@@ -25,7 +25,7 @@ export const ConfirmationListItem = ({
   ...props
 }: ConfirmationListItemProps) => {
   return (
-    <li className={cn("w-full", className)} {...props}>
+    <li className={cn("w-full gap-2", className)} {...props}>
       <Link
         className="flex w-full gap-2 rounded-xs border border-zinc-600 bg-zinc-800 transition-colors duration-300 hover:border-zinc-500 hover:bg-zinc-700 focus-visible:bg-zinc-700"
         to={`/confirmations/${confirmation.id}`}

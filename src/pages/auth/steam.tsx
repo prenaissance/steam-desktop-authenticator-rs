@@ -65,11 +65,11 @@ export const AuthSteamPage = () => {
         .catch((err: Error) => {
           toast.error(
             err instanceof Error ? err.message : "Failed to add account",
-            { dismissible: true },
+            { dismissible: true }
           );
         });
     },
-    [reset, loginMutation.mutateAsync],
+    [reset, loginMutation.mutateAsync]
   );
 
   return (
@@ -209,7 +209,7 @@ export const AuthSteamPage = () => {
                     error instanceof Error
                       ? error.message
                       : "Failed to read .maFile",
-                    { dismissible: true },
+                    { dismissible: true }
                   );
                 }
               };

@@ -76,7 +76,7 @@ export enum AuthApprovalError {
 }
 
 export const approveSession = async (
-  payload: AuthApproveRequest,
+  payload: AuthApproveRequest
 ): Promise<void> =>
   invoke<void>("approve_session", {
     payload,
@@ -86,7 +86,7 @@ export const useApproveSession = (
   options?: Omit<
     UseMutationOptions<void, AuthApprovalError, AuthApproveRequest>,
     "mutationFn"
-  >,
+  >
 ) => {
   const queryClient = useQueryClient();
   const { onSuccess, ...rest } = options || {};
@@ -110,7 +110,7 @@ export const useDenySession = (
   options?: Omit<
     UseMutationOptions<void, AuthApprovalError, AuthDenyRequest>,
     "mutationFn"
-  >,
+  >
 ) => {
   const queryClient = useQueryClient();
   const { onSuccess, ...rest } = options || {};
