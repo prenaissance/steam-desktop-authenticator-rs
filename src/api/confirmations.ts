@@ -1,18 +1,19 @@
 import { type UseQueryOptions, useQuery } from "@tanstack/react-query";
 import { invoke } from "@tauri-apps/api/core";
 
-export type ConfirmationType =
-  | "test"
-  | "trade"
-  | "market-sell"
-  | "feature-opt-out"
-  | "phone-number-change"
-  | "account-recovery"
-  | "api-key-creation"
-  | "join-steam-family"
-  | "unknown";
+export enum ConfirmationType {
+  Test = "test",
+  Trade = "trade",
+  MarketSell = "market-sell",
+  FeatureOptOut = "feature-opt-out",
+  PhoneNumberChange = "phone-number-change",
+  AccountRecovery = "account-recovery",
+  ApiKeyCreation = "api-key-creation",
+  JoinSteamFamily = "join-steam-family",
+  Unknown = "unknown",
+}
 
-export interface ConfirmationResponse {
+export type ConfirmationResponse = {
   type: ConfirmationType;
   typeName: string;
   id: string;
@@ -27,7 +28,7 @@ export interface ConfirmationResponse {
   multi: boolean;
   headline: string;
   summary: string[];
-}
+};
 
 export type GetConfirmationsError =
   | { type: "Unauthorized" }
@@ -42,7 +43,7 @@ export const useConfirmations = (
   options: Omit<
     UseQueryOptions<ConfirmationResponse[], GetConfirmationsError>,
     "queryKey" | "queryFn"
-  >,
+  >
 ) =>
   useQuery<ConfirmationResponse[], GetConfirmationsError>({
     queryKey: ["confirmations"],

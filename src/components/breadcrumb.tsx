@@ -49,7 +49,7 @@ export const Breadcrumb = () => {
   }
 
   return (
-    <div className="mt-1 mb-6 flex w-full items-center justify-center gap-2">
+    <div className="mt-1 mb-2 flex w-full items-center justify-center gap-2">
       <Link
         to="/"
         className="flex items-center gap-1 text-muted-foreground text-sm transition-colors hover:text-foreground"
