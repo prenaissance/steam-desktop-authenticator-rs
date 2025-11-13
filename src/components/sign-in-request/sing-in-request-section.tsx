@@ -8,7 +8,7 @@ export const SignInRequestSection = ({
   <section
     className={cn(
       "border border-border bg-linear-to-r from-primary/10 via-accent/5 to-primary/10",
-      className,
+      className
     )}
     {...props}
   />

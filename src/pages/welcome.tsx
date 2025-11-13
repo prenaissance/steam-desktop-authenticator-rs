@@ -22,7 +22,7 @@ export const WelcomePage = () => {
 
   const handleDocsClick = async () => {
     await openUrl(
-      "https://github.com/prenaissance/steam-desktop-authenticator-rs",
+      "https://github.com/prenaissance/steam-desktop-authenticator-rs"
     );
   };
 

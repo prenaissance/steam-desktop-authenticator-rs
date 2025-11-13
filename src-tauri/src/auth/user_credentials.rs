@@ -77,6 +77,7 @@ impl UserCredentials {
 impl From<UserCredentials> for SteamGuardAccount {
     fn from(value: UserCredentials) -> Self {
         SteamGuardAccount {
+            device_id: value.consistent_device_id(),
             account_name: value.account_name,
             steam_id: value.steam_id,
             serial_number: "".to_string(),
@@ -86,7 +87,6 @@ impl From<UserCredentials> for SteamGuardAccount {
             identity_secret: SecretString::new(value.identity_secret),
             token_gid: "".to_string(),
             uri: SecretString::new("".to_string()),
-            device_id: value.device_id,
             secret_1: SecretString::new("".to_string()),
             tokens: Some(Tokens::new(value.access_token, value.refresh_token)),
         }

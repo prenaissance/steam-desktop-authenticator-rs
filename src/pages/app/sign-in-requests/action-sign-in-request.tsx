@@ -21,7 +21,7 @@ export const ActionSignInRequestPage = () => {
   const navigate = useNavigate();
   const sessionsQuery = useSessions();
   const session = sessionsQuery.data?.find(
-    (session) => session.clientId === clientId,
+    (session) => session.clientId === clientId
   );
   const approveMutation = useApproveSession();
   const denyMutation = useDenySession();
@@ -29,7 +29,7 @@ export const ActionSignInRequestPage = () => {
 
   useEffect(() => {
     setRememberDevice(
-      session?.requestedPersistence === ESessionPersistence.Persistent,
+      session?.requestedPersistence === ESessionPersistence.Persistent
     );
   }, [session]);
 

@@ -39,7 +39,7 @@ export const useLoginFullCredentialsMutation = (
   options?: Omit<
     UseMutationOptions<LoginResponse, LoginError, LoginRequest>,
     "mutationKey" | "mutationFn"
-  >,
+  >
 ) => {
   const queryClient = useQueryClient();
   const { onSuccess, ...rest } = options || {};

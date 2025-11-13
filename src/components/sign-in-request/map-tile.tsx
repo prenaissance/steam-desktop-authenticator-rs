@@ -16,7 +16,7 @@ const lat2y = (lat: number, zoom: number) => {
   return (
     ((1 -
       Math.log(
-        Math.tan((lat * Math.PI) / 180) + 1 / Math.cos((lat * Math.PI) / 180),
+        Math.tan((lat * Math.PI) / 180) + 1 / Math.cos((lat * Math.PI) / 180)
       ) /
         Math.PI) /
       2) *
@@ -66,7 +66,7 @@ export const MapTile = ({
     <div
       className={cn(
         "relative flex h-32 w-64 flex-row overflow-hidden border border-border shadow-sm",
-        className,
+        className
       )}
     >
       <img
@@ -83,7 +83,7 @@ export const MapTile = ({
       <MapPin
         className={cn(
           "absolute h-5 w-5 text-accent drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]",
-          "-translate-y-full translate-x-[-50%]",
+          "-translate-y-full translate-x-[-50%]"
         )}
         style={{
           top: `${markerTopPercent}%`,

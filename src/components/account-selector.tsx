@@ -11,7 +11,7 @@ export const AccountSelector = () => {
   const { data, isFetching } = useAccounts();
   const accounts = data?.accounts || [];
   const activeAccount = accounts.find(
-    (acc) => acc.username === data?.activeAccountName,
+    (acc) => acc.username === data?.activeAccountName
   );
   const { refetch } = useTotp();
   const [open, setOpen] = useState(false);
@@ -115,7 +115,7 @@ export const AccountSelector = () => {
               toast.success(`Logged out from ${activeAccount.username}`);
             } catch (err) {
               toast.error(
-                err instanceof Error ? err.message : "Failed to logout",
+                err instanceof Error ? err.message : "Failed to logout"
               );
             }
           }}
@@ -150,7 +150,7 @@ export const AccountSelector = () => {
                       toast.error(
                         err instanceof Error
                           ? err.message
-                          : "Failed to switch account",
+                          : "Failed to switch account"
                       );
                     }
                   }}
