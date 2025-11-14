@@ -107,7 +107,7 @@
   --secondary-foreground: hsl(210 40% 98%);
   --muted: hsl(222 47% 15%);
   --muted-foreground: hsl(210, 11%, 89%);
-  --accent: hsl(217 91% 60%);
+  --accent: #63b7e7;
   --accent-foreground: hsl(0 0% 100%);
   --destructive: hsl(0 72% 51%);
   --destructive-foreground: hsl(0 0% 100%);
@@ -141,4 +141,88 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.trade_partner_headline {
+  @apply text-accent;
+}
+
+.trade_partner_headline_sub {
+  @apply text-sm text-primary-foreground;
+}
+
+.responsive_trade_offersection {
+  @apply flex flex-col gap-1;
+}
+
+.trade_partner_icon {
+  @apply float-left mr-[5px] pt-[3px] pb-1 h-[25px];
+}
+
+.years_of_service {
+  @apply pt-1 mr-2.5;
+}
+
+.trade_partner_inline_hack {
+  @apply inline-block;
+}
+
+.trade_partner_icon > img {
+  @apply h-[25px];
+}
+
+.trade_partner_info_block {
+  @apply bg-slate-800 text-accent text-sm rounded-xs min-h-2 p-0.5;
+}
+
+.trade_partner_info_block a {
+  @apply text-primary-foreground cursor-pointer;
+}
+
+.trade_partner_info_text {
+  @apply whitespace-nowrap;
+}
+
+.trade_partner_steam_level {
+  @apply pt-0.5 float-left mr-2.5;
+}
+
+.trade_partner_steam_level > div {
+  @apply border-2 rounded-full border-amber-400;
+}
+
+.friendPlayerLevel {
+  @apply inline-block text-base size-7;
+}
+
+.friendPlayerLevelNum {
+  @apply text-primary-foreground text-center align-middle;
+}
+
+.tradeoffer_items_avatar_ctn {
+  @apply inline-block float-left mr-2.5 h-8;
+}
+
+.tradeoffer_items_header {
+  @apply text-xs leading-[26px];
+}
+
+.tradeoffer_items_ctn {
+  @apply border border-zinc-600 bg-zinc-900 rounded-xs p-2;
+}
+
+.trade_item {
+  @apply size-16 border float-left mr-[5px] mb-[5px];
+}
+
+.tradeoffer_items.secondary .trade_item {
+  @apply size-16;
+}
+
+.mobileconf_trade_area > :nth-child(3) {
+  @apply text-sm text-muted-foreground;
+}
+
+.mobileconf_trade_area > :nth-child(4) {
+  @apply hidden;
 }

@@ -4574,8 +4574,7 @@ dependencies = [
 [[package]]
 name = "steamguard"
 version = "0.17.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "65934d7cbc9ccabdbe1e8a6df19d5787a27f26973828ca924bb3c50f85cdb4a0"
+source = "git+https://github.com/dyc3/steamguard-cli.git#c085e66a825257a0b44b8319d104257641f15e75"
 dependencies = [
  "anyhow",
  "base64 0.22.1",

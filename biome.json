@@ -26,6 +26,9 @@
         },
         "useConsistentCurlyBraces": "error"
       },
+      "security": {
+        "noDangerouslySetInnerHtml": "off"
+      },
       "nursery": {
         "useSortedClasses": "warn"
       }
