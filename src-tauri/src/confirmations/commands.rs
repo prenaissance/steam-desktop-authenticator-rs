@@ -1,22 +1,18 @@
-use steamguard::{Confirmer, ConfirmerError, SteamGuardAccount};
+use steamguard::{Confirmer, ConfirmerError};
 
 use super::payloads::{ConfirmationResponse, GetConfirmationsError};
-use crate::{
-    app_state::AppState,
-    confirmations::payloads::{
-        ConfirmationActionRequest, ConfirmationDetailsResponse, ConfirmationError,
-    },
+use crate::app_state::AppState;
+use crate::confirmations::payloads::{
+    ConfirmationActionRequest, ConfirmationDetailsResponse, ConfirmationError,
 };
 
 #[tauri::command]
 pub fn get_confirmations(
     state: tauri::State<'_, AppState>,
 ) -> Result<Vec<ConfirmationResponse>, GetConfirmationsError> {
-    let accounts_config = state.accounts_config.lock().unwrap();
-    let active_account = accounts_config
-        .get_active_account()
+    let steam_guard_account = state
+        .get_active_steam_guard_account()
         .ok_or(GetConfirmationsError::Unauthorized)?;
-    let steam_guard_account: SteamGuardAccount = active_account.clone().into();
     let confirmer = Confirmer::new(state.transport.clone(), &steam_guard_account);
     let confirmations = confirmer.get_confirmations().map_err(|err| {
         log::debug!("Encountered error when fetching confirmations from Steam: {err:?}");
@@ -30,11 +26,9 @@ pub fn get_confirmation_details(
     state: tauri::State<'_, AppState>,
     payload: ConfirmationActionRequest,
 ) -> Result<ConfirmationDetailsResponse, GetConfirmationsError> {
-    let accounts_config = state.accounts_config.lock().unwrap();
-    let active_account = accounts_config
-        .get_active_account()
+    let steam_guard_account = state
+        .get_active_steam_guard_account()
         .ok_or(GetConfirmationsError::Unauthorized)?;
-    let steam_guard_account: SteamGuardAccount = active_account.clone().into();
     let confirmer = Confirmer::new(state.transport.clone(), &steam_guard_account);
     let html = confirmer
         .get_confirmation_details(&payload)
@@ -47,14 +41,72 @@ pub fn accept_confirmation(
     state: tauri::State<'_, AppState>,
     payload: ConfirmationActionRequest,
 ) -> Result<(), ConfirmationError> {
-    let accounts_config = state.accounts_config.lock().unwrap();
-    let active_account = accounts_config
-        .get_active_account()
+    let steam_guard_account = state
+        .get_active_steam_guard_account()
         .ok_or(ConfirmationError::Unauthorized)?;
-    let steam_guard_account: SteamGuardAccount = active_account.clone().into();
     let confirmer = Confirmer::new(state.transport.clone(), &steam_guard_account);
     confirmer
         .accept_confirmation(&payload)
+        .map_err(|err| match err {
+            ConfirmerError::InvalidTokens => ConfirmationError::Unauthorized,
+            ConfirmerError::DeserializeError(_) => ConfirmationError::DeserializationError,
+            ConfirmerError::NetworkFailure(_) => ConfirmationError::NetworkFailure,
+            _ => ConfirmationError::ApiError,
+        })?;
+    Ok(())
+}
+
+#[tauri::command]
+pub fn deny_confirmation(
+    state: tauri::State<'_, AppState>,
+    payload: ConfirmationActionRequest,
+) -> Result<(), ConfirmationError> {
+    let steam_guard_account = state
+        .get_active_steam_guard_account()
+        .ok_or(ConfirmationError::Unauthorized)?;
+    let confirmer = Confirmer::new(state.transport.clone(), &steam_guard_account);
+    confirmer
+        .deny_confirmation(&payload)
+        .map_err(|err| match err {
+            ConfirmerError::InvalidTokens => ConfirmationError::Unauthorized,
+            ConfirmerError::DeserializeError(_) => ConfirmationError::DeserializationError,
+            ConfirmerError::NetworkFailure(_) => ConfirmationError::NetworkFailure,
+            _ => ConfirmationError::ApiError,
+        })?;
+    Ok(())
+}
+
+#[tauri::command]
+pub fn accept_bulk_confirmations(
+    state: tauri::State<'_, AppState>,
+    payload: Vec<ConfirmationActionRequest>,
+) -> Result<(), ConfirmationError> {
+    let steam_guard_account = state
+        .get_active_steam_guard_account()
+        .ok_or(ConfirmationError::Unauthorized)?;
+    let confirmer = Confirmer::new(state.transport.clone(), &steam_guard_account);
+    confirmer
+        .accept_confirmations_bulk(&payload)
+        .map_err(|err| match err {
+            ConfirmerError::InvalidTokens => ConfirmationError::Unauthorized,
+            ConfirmerError::DeserializeError(_) => ConfirmationError::DeserializationError,
+            ConfirmerError::NetworkFailure(_) => ConfirmationError::NetworkFailure,
+            _ => ConfirmationError::ApiError,
+        })?;
+    Ok(())
+}
+
+#[tauri::command]
+pub fn deny_bulk_confirmations(
+    state: tauri::State<'_, AppState>,
+    payload: Vec<ConfirmationActionRequest>,
+) -> Result<(), ConfirmationError> {
+    let steam_guard_account = state
+        .get_active_steam_guard_account()
+        .ok_or(ConfirmationError::Unauthorized)?;
+    let confirmer = Confirmer::new(state.transport.clone(), &steam_guard_account);
+    confirmer
+        .deny_confirmations_bulk(&payload)
         .map_err(|err| match err {
             ConfirmerError::InvalidTokens => ConfirmationError::Unauthorized,
             ConfirmerError::DeserializeError(_) => ConfirmationError::DeserializationError,

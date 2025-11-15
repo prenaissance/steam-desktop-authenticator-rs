@@ -1,6 +1,6 @@
 use std::{fs, sync::Mutex};
 
-use steamguard::transport::WebApiTransport;
+use steamguard::{SteamGuardAccount, transport::WebApiTransport};
 use tauri::Manager;
 
 use crate::account_manager::accounts_config::{AccountsConfig, AccountsInitError};
@@ -41,5 +41,12 @@ impl AppState {
             accounts_config,
             transport,
         }
+    }
+
+    pub fn get_active_steam_guard_account(&self) -> Option<SteamGuardAccount> {
+        let accounts_config = self.accounts_config.lock().unwrap();
+        let active_account = accounts_config.get_active_account()?;
+        let steam_guard_account: SteamGuardAccount = active_account.clone().into();
+        Some(steam_guard_account)
     }
 }

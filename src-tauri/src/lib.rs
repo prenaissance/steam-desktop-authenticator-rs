@@ -78,6 +78,9 @@ pub fn run() {
             confirmations::commands::get_confirmations,
             confirmations::commands::get_confirmation_details,
             confirmations::commands::accept_confirmation,
+            confirmations::commands::deny_confirmation,
+            confirmations::commands::accept_bulk_confirmations,
+            confirmations::commands::deny_bulk_confirmations,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
