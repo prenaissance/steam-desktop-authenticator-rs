@@ -7,7 +7,6 @@ use crate::app_state::AppState;
 mod account;
 mod account_manager;
 mod app_state;
-mod approval;
 mod auth;
 mod authentication_approvals;
 mod common;
@@ -66,11 +65,11 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             auth::commands::login,
-            approval::get_otp,
             account_manager::commands::is_logged_in,
             account_manager::commands::get_accounts,
             account_manager::commands::get_active_account,
             account::commands::get_profile,
+            authentication_approvals::commands::get_otp,
             authentication_approvals::commands::get_sessions,
             authentication_approvals::commands::approve_qr_login,
             authentication_approvals::commands::approve_session,

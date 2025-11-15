@@ -1,29 +1,12 @@
-use serde::Serialize;
 use steamguard::steamapi::ApiRequest;
 use steamguard::token::Tokens;
-use steamguard::transport::{Transport, TransportError, WebApiTransport};
+use steamguard::transport::{Transport, WebApiTransport};
 
-use crate::protobufs::steammessages_player_steamclient::cplayer_get_player_link_details_response::PlayerLinkDetails;
+use crate::AppState;
+use crate::account::payloads::{GetProfileError, ProfileResponse};
 use crate::protobufs::steammessages_player_steamclient::{
     CPlayer_GetPlayerLinkDetails_Request, CPlayer_GetPlayerLinkDetails_Response,
 };
-use crate::{AppState, impl_buildable_req};
-
-#[derive(Debug, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub enum GetProfileError {
-    NoValidAccount,
-    NetworkError,
-}
-
-#[derive(Debug, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct ProfileResponse {
-    pub steam_id: u64,
-    pub persona_name: Option<String>,
-    pub profile_url: Option<String>,
-    pub account_name: String,
-}
 
 /// Profile picture WIP
 #[tauri::command]
@@ -47,26 +30,3 @@ pub fn get_profile(state: tauri::State<'_, AppState>) -> Result<ProfileResponse,
     let response = transport.send_request::<CPlayer_GetPlayerLinkDetails_Request, CPlayer_GetPlayerLinkDetails_Response>(request)?;
     Ok(response.into_response_data().accounts.pop().unwrap().into())
 }
-
-impl From<PlayerLinkDetails> for ProfileResponse {
-    fn from(value: PlayerLinkDetails) -> Self {
-        Self {
-            steam_id: value.public_data.steamid(),
-            persona_name: Some(value.public_data.persona_name().to_string()),
-            profile_url: Some(value.public_data.profile_url().to_string()),
-            account_name: value.private_data.account_name().to_string(),
-        }
-    }
-}
-
-impl From<TransportError> for GetProfileError {
-    fn from(_: TransportError) -> Self {
-        GetProfileError::NetworkError
-    }
-}
-
-impl_buildable_req!(
-    CPlayer_GetPlayerLinkDetails_Request,
-    reqwest::Method::GET,
-    true
-);
