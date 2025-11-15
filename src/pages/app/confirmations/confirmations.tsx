@@ -1,11 +1,12 @@
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { useConfirmations } from "~/api/confirmations";
+import { ConfirmationListFooter } from "~/components/confirmations/confirmation-list-footer";
 import { ConfirmationListItem } from "~/components/confirmations/confirmation-list-item";
-import { Button } from "~/components/ui/button";
 
 export const ConfirmationsPage = () => {
-  const { data, error, refetch } = useConfirmations({});
+  const { data, error } = useConfirmations();
+
   useEffect(() => {
     if (error) {
       toast(`Error loading confirmations: ${error.type}`);
@@ -14,9 +15,9 @@ export const ConfirmationsPage = () => {
   }, [error]);
 
   return (
-    <>
+    <div className="flex h-full flex-col">
       <h1 className="mb-2 text-center font-bold text-2xl">Confirmations</h1>
-      <ul className="flex w-full flex-col items-center gap-1">
+      <ul className="flex w-full grow flex-col items-center gap-1 overflow-y-auto p-1">
         {data?.map((confirmation) => (
           <ConfirmationListItem
             key={confirmation.id}
@@ -24,14 +25,7 @@ export const ConfirmationsPage = () => {
           />
         ))}
       </ul>
-      <Button
-        type="button"
-        variant="default"
-        onClick={() => refetch()}
-        className="-translate-x-1/2 absolute bottom-12 left-1/2 mt-4 rounded px-4 py-2"
-      >
-        Refresh Confirmations
-      </Button>
-    </>
+      <ConfirmationListFooter />
+    </div>
   );
 };

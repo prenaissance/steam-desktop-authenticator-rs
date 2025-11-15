@@ -54,7 +54,7 @@ export const ConfirmationDetailsPage = () => {
   return (
     <div className="flex h-full flex-col">
       {!confirmationDetailsQuery.data ? (
-        <div className="grow">Loading Details...</div>
+        <div className="grow text-center">Loading Details...</div>
       ) : (
         <section
           className="rounded-xs bg-slate-700 p-1"

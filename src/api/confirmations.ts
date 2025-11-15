@@ -146,7 +146,7 @@ export const acceptBulkConfirmations = async (
   await invoke<void>("accept_bulk_confirmations", { payload });
 };
 
-export const useAcceptBatchConfirmationsMutation = (
+export const useAcceptBulkConfirmationsMutation = (
   options?: Omit<
     UseMutationOptions<void, ConfirmationError, ConfirmationActionRequest[]>,
     "queryKey" | "queryFn"
