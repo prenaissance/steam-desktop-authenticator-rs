@@ -50,10 +50,9 @@ pub async fn get_confirmation_details(
     let transport = state.transport.clone();
     let result = tauri::async_runtime::spawn_blocking(move || {
         let confirmer = Confirmer::new(transport, &steam_guard_account);
-        let html = confirmer
+        confirmer
             .get_confirmation_details(&payload)
-            .map_err(|_| GetConfirmationsError::ApiError);
-        html
+            .map_err(|_| GetConfirmationsError::ApiError)
     })
     .await;
 
