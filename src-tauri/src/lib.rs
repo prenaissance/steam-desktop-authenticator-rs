@@ -76,6 +76,8 @@ pub fn run() {
             authentication_approvals::commands::approve_session,
             authentication_approvals::commands::deny_session,
             confirmations::commands::get_confirmations,
+            confirmations::commands::get_confirmation_details,
+            confirmations::commands::accept_confirmation,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

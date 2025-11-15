@@ -40,7 +40,7 @@ export const getConfirmations = async (): Promise<ConfirmationResponse[]> => {
 };
 
 export const useConfirmations = (
-  options: Omit<
+  options?: Omit<
     UseQueryOptions<ConfirmationResponse[], GetConfirmationsError>,
     "queryKey" | "queryFn"
   >
@@ -48,5 +48,37 @@ export const useConfirmations = (
   useQuery<ConfirmationResponse[], GetConfirmationsError>({
     queryKey: ["confirmations"],
     queryFn: getConfirmations,
+    ...options,
+  });
+
+export type ConfirmationActionPayload = {
+  id: string;
+  nonce: string;
+};
+
+export type ConfirmationDetailsResponse = {
+  html: string;
+};
+
+export const getConfirmationErrors = async (
+  payload: ConfirmationActionPayload
+): Promise<ConfirmationDetailsResponse> => {
+  const response = await invoke<ConfirmationDetailsResponse>(
+    "get_confirmation_details",
+    { payload }
+  );
+  return response;
+};
+
+export const useConfirmationDetails = (
+  payload: ConfirmationActionPayload,
+  options: Omit<
+    UseQueryOptions<ConfirmationDetailsResponse, GetConfirmationsError>,
+    "queryKey" | "queryFn"
+  >
+) =>
+  useQuery<ConfirmationDetailsResponse, GetConfirmationsError>({
+    queryKey: ["confirmationDetails", payload.id],
+    queryFn: () => getConfirmationErrors(payload),
     ...options,
   });

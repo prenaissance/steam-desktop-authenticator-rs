@@ -1,6 +1,6 @@
 use chrono::{DateTime, Utc};
-use serde::{Serialize, Serializer};
-use steamguard::{Confirmation, ConfirmationType};
+use serde::{Deserialize, Serialize, Serializer};
+use steamguard::{Confirmation, ConfirmationId, ConfirmationType};
 
 #[derive(Debug)]
 pub struct ConfirmationTypeWrapper(pub ConfirmationType);
@@ -66,8 +66,35 @@ impl From<Confirmation> for ConfirmationResponse {
 }
 
 #[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ConfirmationDetailsResponse {
+    pub html: String,
+}
+
+#[derive(Debug, Serialize)]
 #[serde(tag = "type", content = "message")]
 pub enum GetConfirmationsError {
     Unauthorized,
     ApiError,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ConfirmationActionRequest {
+    pub id: String,
+    pub nonce: String,
+}
+
+impl<'a> From<&'a ConfirmationActionRequest> for ConfirmationId<'a> {
+    fn from(value: &'a ConfirmationActionRequest) -> Self {
+        Self::new(&value.id, &value.nonce)
+    }
+}
+
+#[derive(Debug, Serialize)]
+pub enum ConfirmationError {
+    Unauthorized,
+    ApiError,
+    DeserializationError,
+    NetworkFailure,
 }
