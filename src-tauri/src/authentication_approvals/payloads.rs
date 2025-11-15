@@ -63,7 +63,7 @@ impl AuthSessionResponse {
 }
 
 #[derive(Debug, Serialize)]
-#[serde(tag = "type", content = "message")]
+#[serde(rename_all = "kebab-case")]
 pub enum GetApprovalsError {
     Unauthorized,
     Unknown,
