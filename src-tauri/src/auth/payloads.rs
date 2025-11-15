@@ -34,3 +34,32 @@ impl From<ValidationErrors> for LoginError {
         LoginError::ValidationError(value.to_string())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn fails_login_request_validation_for_non_base64_secrets() {
+        let request = LoginRequest {
+            username: "matcha_latte".to_string(),
+            password: "Password123!".to_string(),
+            shared_secret: "[];'!!!".to_string(),
+            identity_secret: "~~~~".to_string(),
+        };
+
+        assert!(request.validate().is_err())
+    }
+
+    #[test]
+    fn passes_validation_valid_login_request() {
+        let request = LoginRequest {
+            username: "matcha_latte".to_string(),
+            password: "Password123!".to_string(),
+            shared_secret: "FSY2y2mThnpJv1h+lXKTVuH+cvQ=".to_string(),
+            identity_secret: "FSY2y2mThnpJv1h+lXKTVuH+cvQ=".to_string(),
+        };
+
+        assert_eq!(request.validate(), Ok(()))
+    }
+}
