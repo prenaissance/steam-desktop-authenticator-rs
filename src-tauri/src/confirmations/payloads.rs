@@ -92,6 +92,7 @@ impl<'a> From<&'a ConfirmationActionRequest> for ConfirmationId<'a> {
 }
 
 #[derive(Debug, Serialize)]
+#[serde(rename_all = "kebab-case")]
 pub enum ConfirmationError {
     Unauthorized,
     ApiError,

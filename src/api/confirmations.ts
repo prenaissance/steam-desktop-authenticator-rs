@@ -1,4 +1,10 @@
-import { type UseQueryOptions, useQuery } from "@tanstack/react-query";
+import {
+  type UseMutationOptions,
+  type UseQueryOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { invoke } from "@tauri-apps/api/core";
 
 export enum ConfirmationType {
@@ -51,7 +57,7 @@ export const useConfirmations = (
     ...options,
   });
 
-export type ConfirmationActionPayload = {
+export type ConfirmationActionRequest = {
   id: string;
   nonce: string;
 };
@@ -61,7 +67,7 @@ export type ConfirmationDetailsResponse = {
 };
 
 export const getConfirmationErrors = async (
-  payload: ConfirmationActionPayload
+  payload: ConfirmationActionRequest
 ): Promise<ConfirmationDetailsResponse> => {
   const response = await invoke<ConfirmationDetailsResponse>(
     "get_confirmation_details",
@@ -71,7 +77,7 @@ export const getConfirmationErrors = async (
 };
 
 export const useConfirmationDetails = (
-  payload: ConfirmationActionPayload,
+  payload: ConfirmationActionRequest,
   options: Omit<
     UseQueryOptions<ConfirmationDetailsResponse, GetConfirmationsError>,
     "queryKey" | "queryFn"
@@ -82,3 +88,98 @@ export const useConfirmationDetails = (
     queryFn: () => getConfirmationErrors(payload),
     ...options,
   });
+
+export enum ConfirmationError {
+  Unauthorized = "unauthorized",
+  ApiError = "api-error",
+  DeserializationError = "deserialization-error",
+  NetworkFailure = "network-failure",
+}
+
+export const acceptConfirmation = async (
+  payload: ConfirmationActionRequest
+): Promise<void> => {
+  await invoke<void>("accept_confirmation", { payload });
+};
+
+export const useAcceptConfirmationMutation = (
+  options?: Omit<
+    UseMutationOptions<void, ConfirmationError, ConfirmationActionRequest>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const queryClient = useQueryClient();
+  return useMutation<void, ConfirmationError, ConfirmationActionRequest>({
+    mutationFn: acceptConfirmation,
+    onSuccess: (...args) => {
+      queryClient.invalidateQueries({ queryKey: ["confirmations"] });
+      options?.onSuccess?.(...args);
+    },
+  });
+};
+
+export const denyConfirmation = async (
+  payload: ConfirmationActionRequest
+): Promise<void> => {
+  await invoke<void>("deny_confirmation", { payload });
+};
+
+export const useDenyConfirmationMutation = (
+  options?: Omit<
+    UseMutationOptions<void, ConfirmationError, ConfirmationActionRequest>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const queryClient = useQueryClient();
+  return useMutation<void, ConfirmationError, ConfirmationActionRequest>({
+    mutationFn: denyConfirmation,
+    onSuccess: (...args) => {
+      queryClient.invalidateQueries({ queryKey: ["confirmations"] });
+      options?.onSuccess?.(...args);
+    },
+  });
+};
+
+export const acceptBulkConfirmations = async (
+  payload: ConfirmationActionRequest[]
+): Promise<void> => {
+  await invoke<void>("accept_bulk_confirmations", { payload });
+};
+
+export const useAcceptBulkConfirmationsMutation = (
+  options?: Omit<
+    UseMutationOptions<void, ConfirmationError, ConfirmationActionRequest[]>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const queryClient = useQueryClient();
+  return useMutation<void, ConfirmationError, ConfirmationActionRequest[]>({
+    mutationFn: acceptBulkConfirmations,
+    onSuccess: (...args) => {
+      queryClient.invalidateQueries({ queryKey: ["confirmations"] });
+      options?.onSuccess?.(...args);
+    },
+  });
+};
+
+export const denyBulkConfirmations = async (
+  payload: ConfirmationActionRequest[]
+): Promise<void> => {
+  await invoke<void>("deny_bulk_confirmations", { payload });
+};
+
+export const useDenyBulkConfirmationsMutation = (
+  options?: Omit<
+    UseMutationOptions<void, ConfirmationError, ConfirmationActionRequest[]>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const queryClient = useQueryClient();
+  return useMutation<void, ConfirmationError, ConfirmationActionRequest[]>({
+    mutationFn: denyBulkConfirmations,
+    onSuccess: (...args) => {
+      queryClient.invalidateQueries({ queryKey: ["confirmations"] });
+      options?.onSuccess?.(...args);
+    },
+  });
+};
