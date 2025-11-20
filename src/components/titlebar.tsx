@@ -26,7 +26,7 @@ export const TitleBar = () => {
     <nav className="sticky top-0 right-0 left-0 z-30 flex h-9 w-full items-center justify-end gap-2 bg-background px-2 pt-1">
       <div
         role="menubar"
-        className="absolute top-0 left-0 z-30 h-9 w-full"
+        className="absolute top-0 left-0 z-30 mx-2 mt-2 h-9 w-[calc(100%-1rem)] rounded-t-xl"
         onMouseDown={startDrag}
         aria-label="Drag Area"
       />
