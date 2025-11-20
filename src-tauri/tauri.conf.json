@@ -24,9 +24,12 @@
         "title": "Steam Desktop Authenticator",
         "width": 320,
         "height": 600,
+        "minWidth": 320,
+        "minHeight": 600,
+        "maxWidth": 480,
+        "maxHeight": 1000,
         "decorations": false,
-        "transparent": false,
-        "resizable": false
+        "transparent": false
       }
     ],
     "security": {
