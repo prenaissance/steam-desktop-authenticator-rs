@@ -35,6 +35,20 @@ impl From<ValidationErrors> for LoginError {
     }
 }
 
+impl std::fmt::Display for LoginError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::WrongCredentials => write!(f, "Wrong credentials"),
+            Self::ValidationError(msg) => write!(f, "Validation error: {msg}"),
+            Self::OtpError => write!(f, "OTP error"),
+            Self::IOError(msg) => write!(f, "IO error: {msg}"),
+            Self::Unimplemented => write!(f, "Device code confirmation method is not available"),
+        }
+    }
+}
+
+impl std::error::Error for LoginError {}
+
 #[cfg(test)]
 mod tests {
     use super::*;
